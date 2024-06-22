@@ -7,40 +7,50 @@
 <ion-content>
   <form [formGroup]="perfilForm" (ngSubmit)="actualizarPerfil()">
     <ion-card>
-      <ion-img [src]="perfilUsuario.foto || 'assets/default-avatar.png'"></ion-img>
       <ion-card-header>
-        <ion-card-title>{{ perfilUsuario.nombre }} {{ perfilUsuario.apellidoPaterno }}</ion-card-title>
-        <ion-card-subtitle>{{ perfilUsuario.email }}</ion-card-subtitle>
+        <ion-card-title>Perfil</ion-card-title>
       </ion-card-header>
+
       <ion-card-content>
+        <ion-img [src]="perfilUsuario?.foto || 'assets/default-avatar.png'"></ion-img>
+        <ion-card-title>{{ perfilUsuario?.nombre }} {{ perfilUsuario?.apellidoPaterno }}</ion-card-title>
+        <ion-card-subtitle>{{ perfilUsuario?.email }}</ion-card-subtitle>
+
         <ion-item>
           <ion-label position="floating">Nombre</ion-label>
           <ion-input formControlName="nombre"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">Apellido Paterno</ion-label>
           <ion-input formControlName="apellidoPaterno"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">Apellido Materno</ion-label>
           <ion-input formControlName="apellidoMaterno"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">Email</ion-label>
           <ion-input formControlName="email"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">RUT</ion-label>
           <ion-input formControlName="rut"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">Edad</ion-label>
-          <ion-input formControlName="edad" type="number"></ion-input>
+          <ion-input type="number" formControlName="edad"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">Posición</ion-label>
           <ion-input formControlName="posicion"></ion-input>
         </ion-item>
+
         <ion-button expand="full" (click)="tomarFoto()">Tomar Foto</ion-button>
         <ion-button expand="full" type="submit" [disabled]="!perfilForm.valid">Actualizar Perfil</ion-button>
       </ion-card-content>

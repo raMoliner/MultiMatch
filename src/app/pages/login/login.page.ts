@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService } from 'src/app/servicios/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 
 @Component({
@@ -9,37 +8,43 @@ import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service'
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
   loginForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private apiService: ApiService,
     private almacenamientoService: AlmacenamientoService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
-  ngOnInit() {}
-
   onLogin() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      this.apiService.login(email, password).subscribe(
-        async success => {
-          // Establecer isLoggedIn en true
-          await this.almacenamientoService.set('isLoggedIn', true);
-          // Redirigir a la página principal
-          this.router.navigate(['/home']);
-        },
-        error => {
-          console.error('Login failed', error);
-        }
-      );
-    }
+    this.almacenamientoService.getUsuarioByEmail(this.loginForm.value.email).then((usuario) => {
+      if (usuario && usuario.password === this.loginForm.value.password) {
+        this.router.navigate(['/home']);
+      } else {
+        this.presentAlert('Error', 'Email o contraseña incorrectos');
+      }
+    }).catch((error: any) => {
+      this.presentAlert('Error', 'Hubo un error en el login: ' + (error.message || ''));
+    });
+  }
+
+  irARegistro() {
+    this.router.navigate(['/register']);
+  }
+
+  async presentAlert(header: string, message: string) {
+    const alert = document.createElement('ion-alert');
+    alert.header = header;
+    alert.message = message;
+    alert.buttons = ['OK'];
+
+    document.body.appendChild(alert);
+    await alert.present();
   }
 }

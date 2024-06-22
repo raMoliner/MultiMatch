@@ -13,32 +13,19 @@
 
   <ion-list *ngIf="segment === 'partidos'">
     <ion-item *ngFor="let partido of partidos">
-      <ion-label>
-        <h2>{{ partido.fecha }} - {{ partido.hora }}</h2>
-        <p>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</p>
-        <p>{{ partido.lugar }}</p>
-      </ion-label>
+      <ion-label>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</ion-label>
     </ion-item>
   </ion-list>
 
   <ion-list *ngIf="segment === 'jugadores'">
-    <ion-item *ngFor="let jugador of jugadores">
-      <ion-avatar slot="start">
-        <ion-img [src]="jugador.foto || 'assets/default-avatar.png'"></ion-img>
-      </ion-avatar>
-      <ion-label (click)="verJugador(jugador)">
-        <h2>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</h2>
-        <p>{{ jugador.posicion }} - {{ jugador.edad }} años</p>
-      </ion-label>
+    <ion-item *ngFor="let jugador of jugadoresSinEquipo">
+      <ion-label (click)="verJugador(jugador)">{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</ion-label>
     </ion-item>
   </ion-list>
 
   <ion-list *ngIf="segment === 'contrincantes'">
     <ion-item *ngFor="let equipo of equiposBuscandoContrincante">
-      <ion-label>
-        <h2>{{ equipo.nombre }}</h2>
-        <p>Buscando contrincante para jugar en {{ equipo.lugar }}</p>
-      </ion-label>
+      <ion-label>{{ equipo.nombre }}</ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

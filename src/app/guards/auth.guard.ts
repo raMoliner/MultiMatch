@@ -7,12 +7,14 @@ import { AlmacenamientoService } from '../servicios/almacenamiento.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
+
   constructor(private almacenamientoService: AlmacenamientoService, private router: Router) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.almacenamientoService.get('isLoggedIn').then(isLoggedIn => {
+    return this.almacenamientoService.getUsuarios().toPromise().then(usuarios => {
+      const isLoggedIn = (usuarios?.length || 0) > 0;
       if (isLoggedIn) {
         return true;
       } else {

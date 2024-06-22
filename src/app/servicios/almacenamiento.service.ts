@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
+import { from, Observable } from 'rxjs';
 import { Usuario, Equipo, Reserva, Partido } from '../models/models';
 
 @Injectable({
@@ -15,52 +16,130 @@ export class AlmacenamientoService {
   async init() {
     const storage = await this.storage.create();
     this._storage = storage;
-    
-    if (await this.get('isLoggedIn') === null) {
-      this.set('isLoggedIn', false);
+  }
+
+  // Métodos de Usuario
+  setUsuarios(usuarios: Usuario[]): Promise<any> {
+    return this._storage?.set('usuarios', usuarios) as Promise<any>;
+  }
+
+  getUsuarios(): Observable<Usuario[]> {
+    return from(this._storage?.get('usuarios') || Promise.resolve([]));
+  }
+
+  async addUsuario(usuario: Usuario): Promise<void> {
+    const usuarios = await this._storage?.get('usuarios') || [];
+    usuarios.push(usuario);
+    await this._storage?.set('usuarios', usuarios);
+  }
+
+  async getUsuarioByEmail(email: string): Promise<Usuario | undefined> {
+    const usuarios = await this._storage?.get('usuarios') || [];
+    return usuarios.find((user: Usuario) => user.email === email);
+  }
+
+  async updateUsuario(updatedUsuario: Usuario): Promise<void> {
+    const usuarios = await this._storage?.get('usuarios') || [];
+    const index = usuarios.findIndex((user: Usuario) => user.id === updatedUsuario.id);
+    if (index > -1) {
+      usuarios[index] = updatedUsuario;
+      await this._storage?.set('usuarios', usuarios);
     }
   }
-  public async set(key: string, value: any): Promise<void> {
-    await this._storage?.set(key, value);
+
+  async deleteUsuario(id: string): Promise<void> {
+    let usuarios = await this._storage?.get('usuarios') || [];
+    usuarios = usuarios.filter((user: Usuario) => user.id !== id);
+    await this._storage?.set('usuarios', usuarios);
   }
 
-  public async get<T>(key: string): Promise<T | null> {
-    return await this._storage?.get(key) as T | null;
+  // Métodos de Equipo
+  setEquipos(equipos: Equipo[]): Promise<any> {
+    return this._storage?.set('equipos', equipos) as Promise<any>;
   }
 
-  public async remove(key: string): Promise<void> {
-    await this._storage?.remove(key);
+  getEquipos(): Observable<Equipo[]> {
+    return from(this._storage?.get('equipos') || Promise.resolve([]));
   }
 
-  public async getAllUsuarios(): Promise<Usuario[]> {
-    return await this.get<Usuario[]>('usuarios') || [];
+  async addEquipo(equipo: Equipo): Promise<void> {
+    const equipos = await this._storage?.get('equipos') || [];
+    equipos.push(equipo);
+    await this._storage?.set('equipos', equipos);
   }
 
-  public async setUsuarios(usuarios: Usuario[]): Promise<void> {
-    await this.set('usuarios', usuarios);
+  async updateEquipo(updatedEquipo: Equipo): Promise<void> {
+    const equipos = await this._storage?.get('equipos') || [];
+    const index = equipos.findIndex((e: Equipo) => e.id === updatedEquipo.id);
+    if (index > -1) {
+      equipos[index] = updatedEquipo;
+      await this._storage?.set('equipos', equipos);
+    }
   }
 
-  public async getAllEquipos(): Promise<Equipo[]> {
-    return await this.get<Equipo[]>('equipos') || [];
+  async deleteEquipo(id: string): Promise<void> {
+    let equipos = await this._storage?.get('equipos') || [];
+    equipos = equipos.filter((e: Equipo) => e.id !== id);
+    await this._storage?.set('equipos', equipos);
   }
 
-  public async setEquipos(equipos: Equipo[]): Promise<void> {
-    await this.set('equipos', equipos);
+  // Métodos de Reserva
+  setReservas(reservas: Reserva[]): Promise<any> {
+    return this._storage?.set('reservas', reservas) as Promise<any>;
   }
 
-  public async getAllReservas(): Promise<Reserva[]> {
-    return await this.get<Reserva[]>('reservas') || [];
+  getReservas(): Observable<Reserva[]> {
+    return from(this._storage?.get('reservas') || Promise.resolve([]));
   }
 
-  public async setReservas(reservas: Reserva[]): Promise<void> {
-    await this.set('reservas', reservas);
+  async addReserva(reserva: Reserva): Promise<void> {
+    const reservas = await this._storage?.get('reservas') || [];
+    reservas.push(reserva);
+    await this._storage?.set('reservas', reservas);
   }
 
-  public async getAllPartidos(): Promise<Partido[]> {
-    return await this.get<Partido[]>('partidos') || [];
+  async updateReserva(updatedReserva: Reserva): Promise<void> {
+    const reservas = await this._storage?.get('reservas') || [];
+    const index = reservas.findIndex((r: Reserva) => r.id === updatedReserva.id);
+    if (index > -1) {
+      reservas[index] = updatedReserva;
+      await this._storage?.set('reservas', reservas);
+    }
   }
 
-  public async setPartidos(partidos: Partido[]): Promise<void> {
-    await this.set('partidos', partidos);
+  async deleteReserva(id: string): Promise<void> {
+    let reservas = await this._storage?.get('reservas') || [];
+    reservas = reservas.filter((r: Reserva) => r.id !== id);
+    await this._storage?.set('reservas', reservas);
+  }
+
+  // Métodos de Partido
+  setPartidos(partidos: Partido[]): Promise<any> {
+    return this._storage?.set('partidos', partidos) as Promise<any>;
+  }
+
+  getPartidos(): Observable<Partido[]> {
+    return from(this._storage?.get('partidos') || Promise.resolve([]));
+  }
+
+  async addPartido(partido: Partido): Promise<void> {
+    const partidos = await this._storage?.get('partidos') || [];
+    partidos.push(partido);
+    await this._storage?.set('partidos', partidos);
+  }
+
+  async updatePartido(updatedPartido: Partido): Promise<void> {
+    const partidos = await this._storage?.get('partidos') || [];
+    const index = partidos.findIndex((p: Partido) => p.id === updatedPartido.id);
+    if (index > -1) {
+      partidos[index] = updatedPartido;
+      await this._storage?.set('partidos', partidos);
+    }
+  }
+
+  async deletePartido(id: string): Promise<void> {
+    let partidos = await this._storage?.get('partidos') || [];
+    partidos = partidos.filter((p: Partido) => p.id !== id);
+    await this._storage?.set('partidos', partidos);
   }
 }

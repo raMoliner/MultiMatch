@@ -8,12 +8,13 @@ export interface Usuario {
   edad: number;
   posicion: string;
   foto?: string;
+  password?: string;
 }
 
 export interface Equipo {
   id: string;
   nombre: string;
-  lugar?: string; 
+  lugar?: string;
   miembros: Usuario[];
 }
 

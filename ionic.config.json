@@ -1,7 +1,4 @@
 {
   "name": "multi-match",
-  "integrations": {
-    "capacitor": {}
-  },
   "type": "angular"
 }
