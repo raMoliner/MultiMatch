@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Reserva</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let reserva of reservas">
+      <ion-label>
+        <h2>{{ reserva.fecha }} - {{ reserva.hora }}</h2>
+        <p>{{ reserva.equipo.nombre }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="full" (click)="nuevaReserva()">Nueva Reserva</ion-button>
+</ion-content>

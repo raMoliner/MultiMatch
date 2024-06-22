@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Partido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let partido of partidos">
+      <ion-label>
+        <h2>{{ partido.fecha }} - {{ partido.hora }}</h2>
+        <p>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</p>
+        <p>{{ partido.lugar }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="full" (click)="nuevoPartido()">Nuevo Partido</ion-button>
+</ion-content>

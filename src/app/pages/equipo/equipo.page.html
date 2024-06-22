@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Equipo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let miembro of equipo.miembros">
+      <ion-avatar slot="start">
+        <ion-img [src]="miembro.foto || 'assets/default-avatar.png'"></ion-img>
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ miembro.nombre }} {{ miembro.apellidoPaterno }}</h2>
+        <p>{{ miembro.posicion }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="full" (click)="agregarMiembro()">Agregar Miembro</ion-button>
+</ion-content>
