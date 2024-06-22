@@ -13,33 +13,64 @@ export class ApiService {
 
   constructor(private http: HttpClient, private almacenamientoService: AlmacenamientoService) {}
 
+  // Métodos de autenticación
+  login(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  register(user: Usuario): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Métodos para obtener datos
   obtenerPerfilUsuario(userId: string): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/usuarios/${userId}`).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 404) {
-          return this.almacenamientoService.get(`perfilUsuario-${userId}`);
-        } else {
-          return throwError(error);
-        }
-      })
+      catchError(this.handleError)
     );
   }
 
   actualizarPerfilUsuario(data: Usuario): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/usuarios/${data.id}`, data);
+    return this.http.put<void>(`${this.apiUrl}/usuarios/${data.id}`, data).pipe(
+      catchError(this.handleError)
+    );
   }
 
   obtenerEquipos(): Observable<Equipo[]> {
-    return this.http.get<Equipo[]>(`${this.apiUrl}/equipos`);
+    return this.http.get<Equipo[]>(`${this.apiUrl}/equipos`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   obtenerReservas(): Observable<Reserva[]> {
-    return this.http.get<Reserva[]>(`${this.apiUrl}/reservas`);
+    return this.http.get<Reserva[]>(`${this.apiUrl}/reservas`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   obtenerPartidos(): Observable<Partido[]> {
-    return this.http.get<Partido[]>(`${this.apiUrl}/partidos`);
+    return this.http.get<Partido[]>(`${this.apiUrl}/partidos`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Otras funciones para manejar las peticiones API
+  obtenerJugadoresSinEquipo(): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.apiUrl}/jugadores-sin-equipo`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  obtenerEquiposBuscandoContrincante(): Observable<Equipo[]> {
+    return this.http.get<Equipo[]>(`${this.apiUrl}/equipos-buscando-contrincante`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('An error occurred:', error.error);
+    return throwError('Something went wrong; please try again later.');
+  }
 }
