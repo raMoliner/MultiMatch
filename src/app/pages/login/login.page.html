@@ -1,29 +1,50 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Iniciar Sesión</ion-title>
+    <ion-title>Multi-Match</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-card>
-    <ion-img src="assets/img/multi2.jpeg"></ion-img>
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-      <ion-item>
-        <ion-label position="floating">Correo Electrónico</ion-label>
-        <ion-input formControlName="email" type="email"></ion-input>
-      </ion-item>
-      <ion-note *ngIf="loginForm.get('email')!.invalid && loginForm.get('email')!.touched" color="danger">
-        Correo electrónico es requerido.
-      </ion-note>
-      <ion-item>
-        <ion-label position="floating">Contraseña</ion-label>
-        <ion-input formControlName="password" type="password"></ion-input>
-      </ion-item>
-      <ion-note *ngIf="loginForm.get('password')!.invalid && loginForm.get('password')!.touched" color="danger">
-        Contraseña es requerida.
-      </ion-note>
-      <ion-button expand="full" type="submit" [disabled]="!loginForm.valid">Iniciar Sesión</ion-button>
-    </form>
-    <ion-button expand="full" fill="outline" (click)="irARegistro()">Registrarse</ion-button>
-  </ion-card>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <ion-card>
+      <ion-card-header>
+        <img src="assets/img/multi2.jpeg" alt="Multi Match Logo" style="width: 100%; height: auto;">
+        <ion-card-title>Iniciar Sesión</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input formControlName="email"></ion-input>
+          <ion-note *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" color="danger">
+            Email inválido
+          </ion-note>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+          <ion-note *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" color="danger">
+            Contraseña inválida
+          </ion-note>
+        </ion-item>
+
+        <ion-button expand="full" type="submit" [disabled]="!loginForm.valid">Iniciar Sesión</ion-button>
+        <ion-button expand="full" fill="outline" (click)="irARegistro()">Registrarse</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </form>
 </ion-content>
+
+
+<style>
+  .login-image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .login-image {
+    width: 150px;
+    height: auto;
+  }
+</style>

@@ -1,86 +1,80 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Registro</ion-title>
+    <ion-title>Registrarse</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Registro de Jugador</ion-card-title>
-      </ion-card-header>
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="nombre"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched" color="danger">
+      Nombre es requerido
+    </ion-note>
 
-      <ion-card-content>
-        <ion-item>
-          <ion-label position="floating">Nombre</ion-label>
-          <ion-input formControlName="nombre"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched" color="danger">
-          Nombre es requerido y debe tener entre 3 y 20 caracteres
-        </ion-note>
+    <ion-item>
+      <ion-label position="floating">Apellido Paterno</ion-label>
+      <ion-input formControlName="apellidoPaterno"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('apellidoPaterno')?.invalid && registerForm.get('apellidoPaterno')?.touched" color="danger">
+      Apellido Paterno es requerido
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">Apellido Paterno</ion-label>
-          <ion-input formControlName="apellidoPaterno"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('apellidoPaterno')?.invalid && registerForm.get('apellidoPaterno')?.touched" color="danger">
-          Apellido Paterno es requerido y debe tener entre 3 y 20 caracteres
-        </ion-note>
+    <ion-item>
+      <ion-label position="floating">Apellido Materno</ion-label>
+      <ion-input formControlName="apellidoMaterno"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('apellidoMaterno')?.invalid && registerForm.get('apellidoMaterno')?.touched" color="danger">
+      Apellido Materno es requerido
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">Apellido Materno</ion-label>
-          <ion-input formControlName="apellidoMaterno"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('apellidoMaterno')?.invalid && registerForm.get('apellidoMaterno')?.touched" color="danger">
-          Apellido Materno es requerido y debe tener entre 3 y 20 caracteres
-        </ion-note>
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input formControlName="email" type="email"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" color="danger">
+      Email inválido
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input formControlName="email"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" color="danger">
-          Email es requerido y debe tener formato válido
-        </ion-note>
+    <ion-item>
+      <ion-label position="floating">RUT</ion-label>
+      <ion-input formControlName="rut"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('rut')?.invalid && registerForm.get('rut')?.touched" color="danger">
+      RUT es requerido
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">RUT</ion-label>
-          <ion-input formControlName="rut"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('rut')?.invalid && registerForm.get('rut')?.touched" color="danger">
-          RUT es requerido y debe tener formato válido (xx.xxx.xxx-x)
-        </ion-note>
+    <ion-item>
+      <ion-label position="floating">Edad</ion-label>
+      <ion-input formControlName="edad" type="number"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('edad')?.invalid && registerForm.get('edad')?.touched" color="danger">
+      Edad mínima es 18
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">Edad</ion-label>
-          <ion-input type="number" formControlName="edad"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('edad')?.invalid && registerForm.get('edad')?.touched" color="danger">
-          Edad es requerida y debe ser mayor a 16
-        </ion-note>
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input formControlName="password" type="password"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" color="danger">
+      Contraseña inválida
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">Posición</ion-label>
-          <ion-select formControlName="posicion">
-            <ion-select-option value="portero">Portero</ion-select-option>
-            <ion-select-option value="defensa">Defensa</ion-select-option>
-            <ion-select-option value="mediocampista">Mediocampista</ion-select-option>
-            <ion-select-option value="delantero">Delantero</ion-select-option>
-          </ion-select>
-        </ion-item>
+    <ion-item>
+      <ion-label position="floating">Confirmar Contraseña</ion-label>
+      <ion-input formControlName="confirmPassword" type="password"></ion-input>
+    </ion-item>
+    <ion-note *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" color="danger">
+      Las contraseñas no coinciden
+    </ion-note>
 
-        <ion-item>
-          <ion-label position="floating">Contraseña</ion-label>
-          <ion-input type="password" formControlName="password"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" color="danger">
-          Contraseña es requerida, debe tener al menos 8 caracteres, un número y una mayúscula
-        </ion-note>
+    <ion-item>
+      <ion-button expand="full" (click)="takePicture()">Tomar Foto</ion-button>
+    </ion-item>
 
-        <ion-button expand="full" (click)="takePicture()">Tomar Foto</ion-button>
-        <ion-button expand="full" type="submit" [disabled]="!registerForm.valid">Registrar</ion-button>
-      </ion-card-content>
-    </ion-card>
+    <ion-button expand="full" type="submit" [disabled]="!registerForm.valid">Registrarse</ion-button>
+    <ion-button expand="full" fill="outline" (click)="irARegistro()">Iniciar Sesión</ion-button>
   </form>
 </ion-content>

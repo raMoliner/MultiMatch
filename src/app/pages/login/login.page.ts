@@ -1,50 +1,61 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
+import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private almacenamientoService: AlmacenamientoService
+    private formBuilder: FormBuilder,
+    private usuariosService: UsuariosService,
+    private almacenamientoService: AlmacenamientoService,
+    private alertController: AlertController,
+    private navCtrl: NavController
   ) {
-    this.loginForm = this.fb.group({
+    this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
-  onLogin() {
-    this.almacenamientoService.getUsuarioByEmail(this.loginForm.value.email).then((usuario) => {
-      if (usuario && usuario.password === this.loginForm.value.password) {
-        this.router.navigate(['/home']);
-      } else {
-        this.presentAlert('Error', 'Email o contraseña incorrectos');
+  ngOnInit() {}
+
+  async onLogin() {
+    if (this.loginForm.valid) {
+      const { email, password } = this.loginForm.value;
+      try {
+        const usuario = await this.usuariosService.getUsuarioByEmail(email);
+        if (usuario && usuario.password === password) {
+          await this.almacenamientoService.set('isLoggedIn', true);
+          await this.almacenamientoService.set('currentUser', usuario);
+          this.navCtrl.navigateRoot('/home');
+        } else {
+          const alert = await this.alertController.create({
+            header: 'Error',
+            message: 'Email o contraseña incorrectos.',
+            buttons: ['OK'],
+          });
+          await alert.present();
+        }
+      } catch (error) {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: `Hubo un error en el login: ${(error as Error).message}`,
+          buttons: ['OK'],
+        });
+        await alert.present();
       }
-    }).catch((error: any) => {
-      this.presentAlert('Error', 'Hubo un error en el login: ' + (error.message || ''));
-    });
+    }
   }
 
   irARegistro() {
-    this.router.navigate(['/register']);
-  }
-
-  async presentAlert(header: string, message: string) {
-    const alert = document.createElement('ion-alert');
-    alert.header = header;
-    alert.message = message;
-    alert.buttons = ['OK'];
-
-    document.body.appendChild(alert);
-    await alert.present();
+    this.navCtrl.navigateForward('/register');
   }
 }

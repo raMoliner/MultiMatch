@@ -1,31 +1,47 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Multi Match</ion-title>
+    <ion-title>¡Bienvenido&#64;!</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-segment>
-    <ion-segment-button (click)="segmentChanged('partidos')">Próximos Partidos</ion-segment-button>
-    <ion-segment-button (click)="segmentChanged('jugadores')">Jugadores Buscando Equipo</ion-segment-button>
-    <ion-segment-button (click)="segmentChanged('contrincantes')">Busco Contrincante</ion-segment-button>
-  </ion-segment>
-
-  <ion-list *ngIf="segment === 'partidos'">
+  <h2>Próximos Partidos</h2>
+  <ion-list>
     <ion-item *ngFor="let partido of partidos">
       <ion-label>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</ion-label>
+      <p>{{ partido.fecha }} - {{ partido.hora }}</p>
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="segment === 'jugadores'">
+  <h2>Jugadores buscando equipo</h2>
+  <ion-list>
     <ion-item *ngFor="let jugador of jugadoresSinEquipo">
       <ion-label (click)="verJugador(jugador)">{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</ion-label>
+      <p>{{ jugador.posicion }} - {{ jugador.edad }} años</p>
+    </ion-item>
+  </ion-list>
+  <h2>Equipos buscando contrincante</h2>
+  <ion-list>
+    <ion-item *ngFor="let equipo of equiposBuscandoContrincante">
+      <ion-label>{{ equipo.nombre }}</ion-label>
+      <p>Buscando contrincante para jugar en {{ equipo.lugar }}</p>
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="segment === 'contrincantes'">
-    <ion-item *ngFor="let equipo of equiposBuscandoContrincante">
-      <ion-label>{{ equipo.nombre }}</ion-label>
+  <ion-list>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Jugadores Destacados</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-item *ngFor="let jugador of jugadoresDestacados">
+      <ion-avatar slot="start">
+        <img [src]="jugador.image" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ jugador.name }}</h2>
+        <p>{{ jugador.gender }}</p>
+      </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

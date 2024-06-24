@@ -18,6 +18,22 @@ export class AlmacenamientoService {
     this._storage = storage;
   }
 
+  async set(key: string, value: any): Promise<any> {
+    console.log(`Set ${key}:`, value);
+    return this._storage?.set(key, value);
+  }
+
+  async get(key: string): Promise<any> {
+    const value = await this._storage?.get(key);
+    console.log(`Get ${key}:`, value);
+    return value;
+  }
+
+  async clear(): Promise<void> {
+    await this._storage?.clear();
+    console.log('Almacenamiento limpiado');
+  }
+
   // Métodos de Usuario
   setUsuarios(usuarios: Usuario[]): Promise<any> {
     return this._storage?.set('usuarios', usuarios) as Promise<any>;
@@ -31,11 +47,14 @@ export class AlmacenamientoService {
     const usuarios = await this._storage?.get('usuarios') || [];
     usuarios.push(usuario);
     await this._storage?.set('usuarios', usuarios);
+    console.log('Usuario agregado:', usuario);
   }
 
   async getUsuarioByEmail(email: string): Promise<Usuario | undefined> {
     const usuarios = await this._storage?.get('usuarios') || [];
-    return usuarios.find((user: Usuario) => user.email === email);
+    const usuario = usuarios.find((user: Usuario) => user.email === email);
+    console.log('Usuario encontrado por email:', usuario);
+    return usuario;
   }
 
   async updateUsuario(updatedUsuario: Usuario): Promise<void> {

@@ -1,62 +1,99 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
-import { Usuario } from 'src/app/models/models';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
+import { AlertController, NavController } from '@ionic/angular';
+import { CameraService } from 'src/app/servicios/camera.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
 })
-export class RegisterPage {
+export class RegisterPage implements OnInit {
   registerForm: FormGroup;
+  photo: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private almacenamientoService: AlmacenamientoService
+    private formBuilder: FormBuilder,
+    private usuariosService: UsuariosService,
+    private alertController: AlertController,
+    private navCtrl: NavController,
+    private cameraService: CameraService
   ) {
-    this.registerForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      apellidoPaterno: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      apellidoMaterno: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+    this.registerForm = this.formBuilder.group({
+      nombre: ['', [Validators.required]],
+      apellidoPaterno: ['', [Validators.required]],
+      apellidoMaterno: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
-      edad: ['', [Validators.required, Validators.min(16)]],
-      posicion: ['', Validators.required],
-      foto: [''],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/(?=.*\d)(?=.*[A-Z])/)]],
-    });
+      rut: ['', [Validators.required]],
+      edad: ['', [Validators.required, Validators.min(18)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]]
+    }, {validator: this.passwordMatchValidator});
   }
 
-  onRegister() {
+  ngOnInit() {}
+
+  passwordMatchValidator(formGroup: FormGroup) {
+    return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value 
+      ? null : {'mismatch': true};
+  }
+
+  async onRegister() {
     if (this.registerForm.valid) {
-      const newUser: Usuario = { ...this.registerForm.value, id: this.generateId() };
-      this.almacenamientoService.addUsuario(newUser).then(() => {
-        this.presentAlert('Registro exitoso', 'Te has registrado correctamente');
-        this.router.navigate(['/login']);
-      }).catch((error: any) => {
-        this.presentAlert('Error', 'Hubo un error en el registro: ' + (error.message || ''));
-      });
+      const { nombre, apellidoPaterno, apellidoMaterno, email, rut, edad, password } = this.registerForm.value;
+      const nuevoUsuario = {
+        id: uuidv4(),
+        nombre: this.capitalizeFirstLetter(nombre),
+        apellidoPaterno: this.capitalizeFirstLetter(apellidoPaterno),
+        apellidoMaterno: this.capitalizeFirstLetter(apellidoMaterno),
+        email,
+        rut,
+        edad,
+        password,
+        posicion: '', // agregar posición aquí si es necesario
+        foto: this.photo || 'assets/default-avatar.png'
+      };
+
+      try {
+        await this.usuariosService.addUsuario(nuevoUsuario);
+        const alert = await this.alertController.create({
+          header: 'Éxito',
+          message: 'Registro exitoso.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        this.navCtrl.navigateRoot('/login');
+      } catch (error) {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: (error as Error).message,
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
     }
   }
 
-  generateId(): string {
-    return '_' + Math.random().toString(36).substr(2, 9);
+  async takePicture() {
+    try {
+      this.photo = await this.cameraService.takePicture();
+    } catch (err) {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'No se pudo tomar la foto: ' + err,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
-  takePicture() {
-    console.log('Tomar foto');
+  capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   }
 
-  async presentAlert(header: string, message: string) {
-    const alert = document.createElement('ion-alert');
-    alert.header = header;
-    alert.message = message;
-    alert.buttons = ['OK'];
-
-    document.body.appendChild(alert);
-    await alert.present();
+  irARegistro() {
+    this.navCtrl.navigateForward('/login');
   }
 }
