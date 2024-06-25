@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AlmacenamientoService } from './servicios/almacenamiento.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private almacenamientoService: AlmacenamientoService
+    private almacenamientoService: AlmacenamientoService,
+    private cd: ChangeDetectorRef
   ) {
     this.initializeApp();
   }
@@ -39,6 +41,7 @@ export class AppComponent implements OnInit {
   async checkLoginStatus() {
     const loggedIn = await this.almacenamientoService.get('isLoggedIn');
     this.isLoggedIn = !!loggedIn; 
+    this.cd.detectChanges(); 
   }
 
   async logout() {
@@ -46,6 +49,7 @@ export class AppComponent implements OnInit {
     await this.almacenamientoService.set('currentUser', null);
     this.isLoggedIn = false;
     this.router.navigateByUrl('/login');
+    this.cd.detectChanges(); // 
   }
 
   navigateToHome() {
@@ -54,5 +58,10 @@ export class AppComponent implements OnInit {
 
   navigateToProfile() {
     this.router.navigateByUrl('/perfil');
+  }
+
+  async clearStorage() {
+    await this.almacenamientoService.clear();
+    console.log('Storage cleared');
   }
 }

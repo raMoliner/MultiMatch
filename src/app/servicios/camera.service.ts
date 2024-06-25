@@ -16,13 +16,11 @@ export class CameraService {
       mediaType: this.camera.MediaType.PICTURE
     };
 
-    return new Promise((resolve, reject) => {
-      this.camera.getPicture(options).then((imageData) => {
-        let base64Image = 'data:image/jpeg;base64,' + imageData;
-        resolve(base64Image);
-      }, (err) => {
-        reject(err);
-      });
-    });
+    try {
+      const imageData = await this.camera.getPicture(options);
+      return 'data:image/jpeg;base64,' + imageData;
+    } catch (err) {
+      throw new Error('Error sacando foto: ' + err);
+    }
   }
 }

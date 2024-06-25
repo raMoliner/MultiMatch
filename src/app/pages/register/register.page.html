@@ -55,6 +55,19 @@
     </ion-note>
 
     <ion-item>
+      <ion-label position="floating">Posición</ion-label>
+      <ion-select formControlName="posicion">
+        <ion-select-option value="Portero">Portero</ion-select-option>
+        <ion-select-option value="Delantero">Delantero</ion-select-option>
+        <ion-select-option value="Mediocampista">Mediocampista</ion-select-option>
+        <ion-select-option value="Defensa">Defensa</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-note *ngIf="registerForm.get('posicion')?.invalid && registerForm.get('posicion')?.touched" color="danger">
+      Posición es requerida
+    </ion-note>
+
+    <ion-item>
       <ion-label position="floating">Contraseña</ion-label>
       <ion-input formControlName="password" type="password"></ion-input>
     </ion-item>

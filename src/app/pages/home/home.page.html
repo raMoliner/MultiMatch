@@ -1,45 +1,48 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>¡Bienvenido&#64;!</ion-title>
+    <ion-title>¡Bienvenid&#64; !</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <h2>Próximos Partidos</h2>
   <ion-list>
-    <ion-item *ngFor="let partido of partidos">
-      <ion-label>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</ion-label>
-      <p>{{ partido.fecha }} - {{ partido.hora }}</p>
+    <ion-item *ngFor="let partido of partidos; trackBy: trackById">
+      <ion-label>
+        <h3>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</h3>
+        <p>{{ partido.fecha }} - {{ partido.hora }}</p>
+      </ion-label>
     </ion-item>
   </ion-list>
 
   <h2>Jugadores buscando equipo</h2>
   <ion-list>
-    <ion-item *ngFor="let jugador of jugadoresSinEquipo">
-      <ion-label (click)="verJugador(jugador)">{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</ion-label>
-      <p>{{ jugador.posicion }} - {{ jugador.edad }} años</p>
-    </ion-item>
-  </ion-list>
-  <h2>Equipos buscando contrincante</h2>
-  <ion-list>
-    <ion-item *ngFor="let equipo of equiposBuscandoContrincante">
-      <ion-label>{{ equipo.nombre }}</ion-label>
-      <p>Buscando contrincante para jugar en {{ equipo.lugar }}</p>
+    <ion-item *ngFor="let jugador of jugadoresSinEquipo; trackBy: trackById" (click)="verJugador(jugador)">
+      <ion-label>
+        <h3>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</h3>
+        <p>{{ jugador.posicion }} - {{ jugador.edad }} años</p>
+      </ion-label>
     </ion-item>
   </ion-list>
 
+  <h2>Equipos buscando contrincante</h2>
   <ion-list>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Jugadores Destacados</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-item *ngFor="let jugador of jugadoresDestacados">
+    <ion-item *ngFor="let equipo of equiposBuscandoContrincante; trackBy: trackById">
+      <ion-label>
+        <h3>{{ equipo.nombre }}</h3>
+        <p>Buscando contrincante para jugar en {{ equipo.lugar }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <h2>Jugadores Destacados</h2>
+  <ion-list>
+    <ion-item *ngFor="let jugador of jugadoresDestacados; trackBy: trackById">
       <ion-avatar slot="start">
-        <img [src]="jugador.image" />
+        <img [src]="jugador.image" alt="{{ jugador.name }}" />
       </ion-avatar>
       <ion-label>
-        <h2>{{ jugador.name }}</h2>
+        <h3>{{ jugador.name }}</h3>
         <p>{{ jugador.gender }}</p>
       </ion-label>
     </ion-item>

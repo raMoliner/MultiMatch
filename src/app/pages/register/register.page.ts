@@ -29,20 +29,21 @@ export class RegisterPage implements OnInit {
       rut: ['', [Validators.required]],
       edad: ['', [Validators.required, Validators.min(18)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8)]]
-    }, {validator: this.passwordMatchValidator});
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+      posicion: ['', [Validators.required]] // Added field for Posición
+    }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit() {}
 
   passwordMatchValidator(formGroup: FormGroup) {
     return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value 
-      ? null : {'mismatch': true};
+      ? null : { 'mismatch': true };
   }
 
   async onRegister() {
     if (this.registerForm.valid) {
-      const { nombre, apellidoPaterno, apellidoMaterno, email, rut, edad, password } = this.registerForm.value;
+      const { nombre, apellidoPaterno, apellidoMaterno, email, rut, edad, password, posicion } = this.registerForm.value;
       const nuevoUsuario = {
         id: uuidv4(),
         nombre: this.capitalizeFirstLetter(nombre),
@@ -52,7 +53,7 @@ export class RegisterPage implements OnInit {
         rut,
         edad,
         password,
-        posicion: '', // agregar posición aquí si es necesario
+        posicion,
         foto: this.photo || 'assets/default-avatar.png'
       };
 

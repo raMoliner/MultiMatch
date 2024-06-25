@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuariosService } from 'src/app/servicios/usuarios.service';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 import { AlertController, NavController } from '@ionic/angular';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ export class LoginPage implements OnInit {
     private usuariosService: UsuariosService,
     private almacenamientoService: AlmacenamientoService,
     private alertController: AlertController,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private cd: ChangeDetectorRef // Inject ChangeDetectorRef
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -36,6 +38,7 @@ export class LoginPage implements OnInit {
           await this.almacenamientoService.set('isLoggedIn', true);
           await this.almacenamientoService.set('currentUser', usuario);
           this.navCtrl.navigateRoot('/home');
+          this.cd.detectChanges(); // Ensure change detection is run
         } else {
           const alert = await this.alertController.create({
             header: 'Error',

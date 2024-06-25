@@ -14,31 +14,63 @@ export class PartidosService {
   }
 
   async init() {
-    const storage = await this.storage.create();
-    this._storage = storage;
-    const storedPartidos = await this._storage?.get('partidos');
-    this.partidos = storedPartidos || [];
+    try {
+      const storage = await this.storage.create();
+      this._storage = storage;
+      const storedPartidos = await this._storage.get('partidos');
+      this.partidos = storedPartidos || [];
+    } catch (error) {
+      console.error('Error initializing storage:', error);
+    }
   }
 
   async addPartido(partido: Partido): Promise<void> {
+    if (!this._storage) {
+      console.error('Storage is not initialized');
+      return;
+    }
     this.partidos.push(partido);
-    await this._storage?.set('partidos', this.partidos);
+    try {
+      await this._storage.set('partidos', this.partidos);
+    } catch (error) {
+      console.error('Error adding partido:', error);
+    }
   }
 
   async getPartidos(): Promise<Partido[]> {
+    if (!this._storage) {
+      console.error('Storage is not initialized');
+      return [];
+    }
     return this.partidos;
   }
 
   async updatePartido(updatedPartido: Partido): Promise<void> {
+    if (!this._storage) {
+      console.error('Storage is not initialized');
+      return;
+    }
     const index = this.partidos.findIndex(p => p.id === updatedPartido.id);
     if (index > -1) {
       this.partidos[index] = updatedPartido;
-      await this._storage?.set('partidos', this.partidos);
+      try {
+        await this._storage.set('partidos', this.partidos);
+      } catch (error) {
+        console.error('Error updating partido:', error);
+      }
     }
   }
 
   async deletePartido(id: string): Promise<void> {
+    if (!this._storage) {
+      console.error('Storage is not initialized');
+      return;
+    }
     this.partidos = this.partidos.filter(p => p.id !== id);
-    await this._storage?.set('partidos', this.partidos);
+    try {
+      await this._storage.set('partidos', this.partidos);
+    } catch (error) {
+      console.error('Error deleting partido:', error);
+    }
   }
 }

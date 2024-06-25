@@ -18,147 +18,213 @@ export class AlmacenamientoService {
     this._storage = storage;
   }
 
-  async set(key: string, value: any): Promise<any> {
-    console.log(`Set ${key}:`, value);
-    return this._storage?.set(key, value);
+  async set<T>(key: string, value: T): Promise<void> {
+    try {
+      console.log(`Set ${key}:`, value);
+      await this._storage?.set(key, value);
+    } catch (error) {
+      console.error(`Error setting ${key}:`, error);
+    }
   }
 
-  async get(key: string): Promise<any> {
-    const value = await this._storage?.get(key);
-    console.log(`Get ${key}:`, value);
-    return value;
+  async get<T>(key: string): Promise<T | null> {
+    try {
+      const value = await this._storage?.get(key);
+      console.log(`Get ${key}:`, value);
+      return value;
+    } catch (error) {
+      console.error(`Error getting ${key}:`, error);
+      return null;
+    }
   }
 
   async clear(): Promise<void> {
-    await this._storage?.clear();
-    console.log('Almacenamiento limpiado');
+    try {
+      await this._storage?.clear();
+      console.log('Almacenamiento limpiado');
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+    }
   }
 
   // Métodos de Usuario
-  setUsuarios(usuarios: Usuario[]): Promise<any> {
-    return this._storage?.set('usuarios', usuarios) as Promise<any>;
+  setUsuarios(usuarios: Usuario[]): Promise<void> {
+    return this.set('usuarios', usuarios);
   }
 
   getUsuarios(): Observable<Usuario[]> {
-    return from(this._storage?.get('usuarios') || Promise.resolve([]));
+    return from(this.get<Usuario[]>('usuarios').then(data => data || []));
   }
 
   async addUsuario(usuario: Usuario): Promise<void> {
-    const usuarios = await this._storage?.get('usuarios') || [];
-    usuarios.push(usuario);
-    await this._storage?.set('usuarios', usuarios);
-    console.log('Usuario agregado:', usuario);
+    try {
+      const usuarios = await this.get<Usuario[]>('usuarios') || [];
+      usuarios.push(usuario);
+      await this.set('usuarios', usuarios);
+      console.log('Usuario agregado:', usuario);
+    } catch (error) {
+      console.error('Error adding usuario:', error);
+    }
   }
 
   async getUsuarioByEmail(email: string): Promise<Usuario | undefined> {
-    const usuarios = await this._storage?.get('usuarios') || [];
-    const usuario = usuarios.find((user: Usuario) => user.email === email);
-    console.log('Usuario encontrado por email:', usuario);
-    return usuario;
+    try {
+      const usuarios = await this.get<Usuario[]>('usuarios') || [];
+      const usuario = usuarios.find(user => user.email === email);
+      console.log('Usuario encontrado por email:', usuario);
+      return usuario;
+    } catch (error) {
+      console.error('Error getting usuario by email:', error);
+      return undefined;
+    }
   }
 
   async updateUsuario(updatedUsuario: Usuario): Promise<void> {
-    const usuarios = await this._storage?.get('usuarios') || [];
-    const index = usuarios.findIndex((user: Usuario) => user.id === updatedUsuario.id);
-    if (index > -1) {
-      usuarios[index] = updatedUsuario;
-      await this._storage?.set('usuarios', usuarios);
+    try {
+      const usuarios = await this.get<Usuario[]>('usuarios') || [];
+      const index = usuarios.findIndex(user => user.id === updatedUsuario.id);
+      if (index > -1) {
+        usuarios[index] = updatedUsuario;
+        await this.set('usuarios', usuarios);
+      }
+    } catch (error) {
+      console.error('Error updating usuario:', error);
     }
   }
 
   async deleteUsuario(id: string): Promise<void> {
-    let usuarios = await this._storage?.get('usuarios') || [];
-    usuarios = usuarios.filter((user: Usuario) => user.id !== id);
-    await this._storage?.set('usuarios', usuarios);
+    try {
+      let usuarios = await this.get<Usuario[]>('usuarios') || [];
+      usuarios = usuarios.filter(user => user.id !== id);
+      await this.set('usuarios', usuarios);
+    } catch (error) {
+      console.error('Error deleting usuario:', error);
+    }
   }
 
   // Métodos de Equipo
-  setEquipos(equipos: Equipo[]): Promise<any> {
-    return this._storage?.set('equipos', equipos) as Promise<any>;
+  setEquipos(equipos: Equipo[]): Promise<void> {
+    return this.set('equipos', equipos);
   }
 
   getEquipos(): Observable<Equipo[]> {
-    return from(this._storage?.get('equipos') || Promise.resolve([]));
+    return from(this.get<Equipo[]>('equipos').then(data => data || []));
   }
 
   async addEquipo(equipo: Equipo): Promise<void> {
-    const equipos = await this._storage?.get('equipos') || [];
-    equipos.push(equipo);
-    await this._storage?.set('equipos', equipos);
+    try {
+      const equipos = await this.get<Equipo[]>('equipos') || [];
+      equipos.push(equipo);
+      await this.set('equipos', equipos);
+    } catch (error) {
+      console.error('Error adding equipo:', error);
+    }
   }
 
   async updateEquipo(updatedEquipo: Equipo): Promise<void> {
-    const equipos = await this._storage?.get('equipos') || [];
-    const index = equipos.findIndex((e: Equipo) => e.id === updatedEquipo.id);
-    if (index > -1) {
-      equipos[index] = updatedEquipo;
-      await this._storage?.set('equipos', equipos);
+    try {
+      const equipos = await this.get<Equipo[]>('equipos') || [];
+      const index = equipos.findIndex(e => e.id === updatedEquipo.id);
+      if (index > -1) {
+        equipos[index] = updatedEquipo;
+        await this.set('equipos', equipos);
+      }
+    } catch (error) {
+      console.error('Error updating equipo:', error);
     }
   }
 
   async deleteEquipo(id: string): Promise<void> {
-    let equipos = await this._storage?.get('equipos') || [];
-    equipos = equipos.filter((e: Equipo) => e.id !== id);
-    await this._storage?.set('equipos', equipos);
+    try {
+      let equipos = await this.get<Equipo[]>('equipos') || [];
+      equipos = equipos.filter(e => e.id !== id);
+      await this.set('equipos', equipos);
+    } catch (error) {
+      console.error('Error deleting equipo:', error);
+    }
   }
 
   // Métodos de Reserva
-  setReservas(reservas: Reserva[]): Promise<any> {
-    return this._storage?.set('reservas', reservas) as Promise<any>;
+  setReservas(reservas: Reserva[]): Promise<void> {
+    return this.set('reservas', reservas);
   }
 
   getReservas(): Observable<Reserva[]> {
-    return from(this._storage?.get('reservas') || Promise.resolve([]));
+    return from(this.get<Reserva[]>('reservas').then(data => data || []));
   }
 
   async addReserva(reserva: Reserva): Promise<void> {
-    const reservas = await this._storage?.get('reservas') || [];
-    reservas.push(reserva);
-    await this._storage?.set('reservas', reservas);
+    try {
+      const reservas = await this.get<Reserva[]>('reservas') || [];
+      reservas.push(reserva);
+      await this.set('reservas', reservas);
+    } catch (error) {
+      console.error('Error adding reserva:', error);
+    }
   }
 
   async updateReserva(updatedReserva: Reserva): Promise<void> {
-    const reservas = await this._storage?.get('reservas') || [];
-    const index = reservas.findIndex((r: Reserva) => r.id === updatedReserva.id);
-    if (index > -1) {
-      reservas[index] = updatedReserva;
-      await this._storage?.set('reservas', reservas);
+    try {
+      const reservas = await this.get<Reserva[]>('reservas') || [];
+      const index = reservas.findIndex(r => r.id === updatedReserva.id);
+      if (index > -1) {
+        reservas[index] = updatedReserva;
+        await this.set('reservas', reservas);
+      }
+    } catch (error) {
+      console.error('Error updating reserva:', error);
     }
   }
 
   async deleteReserva(id: string): Promise<void> {
-    let reservas = await this._storage?.get('reservas') || [];
-    reservas = reservas.filter((r: Reserva) => r.id !== id);
-    await this._storage?.set('reservas', reservas);
+    try {
+      let reservas = await this.get<Reserva[]>('reservas') || [];
+      reservas = reservas.filter(r => r.id !== id);
+      await this.set('reservas', reservas);
+    } catch (error) {
+      console.error('Error deleting reserva:', error);
+    }
   }
 
   // Métodos de Partido
-  setPartidos(partidos: Partido[]): Promise<any> {
-    return this._storage?.set('partidos', partidos) as Promise<any>;
+  setPartidos(partidos: Partido[]): Promise<void> {
+    return this.set('partidos', partidos);
   }
 
   getPartidos(): Observable<Partido[]> {
-    return from(this._storage?.get('partidos') || Promise.resolve([]));
+    return from(this.get<Partido[]>('partidos').then(data => data || []));
   }
 
   async addPartido(partido: Partido): Promise<void> {
-    const partidos = await this._storage?.get('partidos') || [];
-    partidos.push(partido);
-    await this._storage?.set('partidos', partidos);
+    try {
+      const partidos = await this.get<Partido[]>('partidos') || [];
+      partidos.push(partido);
+      await this.set('partidos', partidos);
+    } catch (error) {
+      console.error('Error adding partido:', error);
+    }
   }
 
   async updatePartido(updatedPartido: Partido): Promise<void> {
-    const partidos = await this._storage?.get('partidos') || [];
-    const index = partidos.findIndex((p: Partido) => p.id === updatedPartido.id);
-    if (index > -1) {
-      partidos[index] = updatedPartido;
-      await this._storage?.set('partidos', partidos);
+    try {
+      const partidos = await this.get<Partido[]>('partidos') || [];
+      const index = partidos.findIndex(p => p.id === updatedPartido.id);
+      if (index > -1) {
+        partidos[index] = updatedPartido;
+        await this.set('partidos', partidos);
+      }
+    } catch (error) {
+      console.error('Error updating partido:', error);
     }
   }
 
   async deletePartido(id: string): Promise<void> {
-    let partidos = await this._storage?.get('partidos') || [];
-    partidos = partidos.filter((p: Partido) => p.id !== id);
-    await this._storage?.set('partidos', partidos);
+    try {
+      let partidos = await this.get<Partido[]>('partidos') || [];
+      partidos = partidos.filter(p => p.id !== id);
+      await this.set('partidos', partidos);
+    } catch (error) {
+      console.error('Error deleting partido:', error);
+    }
   }
 }

@@ -13,14 +13,20 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.almacenamientoService.getUsuarios().toPromise().then(usuarios => {
-      const isLoggedIn = (usuarios?.length || 0) > 0;
+    return this.checkLoginStatus();
+  }
+
+  private async checkLoginStatus(): Promise<boolean | UrlTree> {
+    try {
+      const isLoggedIn = await this.almacenamientoService.get<boolean>('isLoggedIn');
       if (isLoggedIn) {
         return true;
       } else {
-        this.router.navigate(['/login']);
-        return false;
+        return this.router.parseUrl('/login');
       }
-    });
+    } catch (error) {
+      console.error('Error checking login status:', error);
+      return this.router.parseUrl('/login');
+    }
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 import { Usuario } from 'src/app/models/models';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-perfil',
@@ -14,7 +15,8 @@ export class PerfilPage implements OnInit {
 
   constructor(
     private almacenamientoService: AlmacenamientoService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private alertController: AlertController
   ) {
     this.perfilForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -33,22 +35,50 @@ export class PerfilPage implements OnInit {
   }
 
   loadPerfil() {
-    this.almacenamientoService.getUsuarios().subscribe(usuarios => {
-      this.perfilUsuario = usuarios[0]; // Supongamos que el primer usuario es el perfil actual
-      if (this.perfilUsuario) {
-        this.perfilForm.patchValue(this.perfilUsuario);
+    this.almacenamientoService.getUsuarios().subscribe(
+      (usuarios: Usuario[]) => {
+        this.perfilUsuario = usuarios[0]; 
+        if (this.perfilUsuario) {
+          this.perfilForm.patchValue(this.perfilUsuario);
+        }
+      },
+      error => {
+        this.showErrorAlert('Error cargando el profile', (error as Error).message);
       }
-    });
+    );
   }
 
-  actualizarPerfil() {
-    if (this.perfilUsuario) {
+  async actualizarPerfil() {
+    if (this.perfilUsuario && this.perfilForm.valid) {
       const updatedUsuario = { ...this.perfilUsuario, ...this.perfilForm.value };
-      this.almacenamientoService.updateUsuario(updatedUsuario);
+      try {
+        await this.almacenamientoService.updateUsuario(updatedUsuario);
+        this.showSuccessAlert('Profile actualizado con éxito');
+      } catch (error) {
+        this.showErrorAlert('Error actualizando el profile', (error as Error).message);
+      }
     }
   }
 
   tomarFoto() {
     console.log('Tomar foto');
+  }
+
+  private async showErrorAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  private async showSuccessAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Éxito',
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 }
