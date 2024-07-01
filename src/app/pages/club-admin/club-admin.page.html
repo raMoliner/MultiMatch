@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Administración de Club</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h2>Canchas</h2>
+  <ion-list>
+    <ion-item *ngFor="let cancha of canchas">
+      <ion-label>
+        <h3>{{ cancha.nombre }} - {{ cancha.tipo }}</h3>
+      </ion-label>
+      <ion-button (click)="deleteCancha(cancha.id)" color="danger">Eliminar</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-item>
+    <ion-label position="floating">Nombre de la cancha</ion-label>
+    <ion-input [(ngModel)]="nombreCancha"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Tipo de cancha</ion-label>
+    <ion-input [(ngModel)]="tipoCancha"></ion-input>
+  </ion-item>
+  <ion-button expand="full" (click)="addCancha()">Agregar Cancha</ion-button>
+</ion-content>

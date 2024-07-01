@@ -36,9 +36,9 @@ export class HomePage implements OnInit {
     await loading.present();
 
     try {
-      this.partidos = await this.almacenamientoService.get<Partido[]>('partidos') || [];
-      this.jugadoresSinEquipo = await this.almacenamientoService.get<Usuario[]>('usuarios') || [];
-      this.equiposBuscandoContrincante = await this.almacenamientoService.get<Equipo[]>('equipos') || [];
+      this.partidos = await this.almacenamientoService.get('partidos') || [];
+      this.jugadoresSinEquipo = await this.almacenamientoService.get('usuarios') || [];
+      this.equiposBuscandoContrincante = await this.almacenamientoService.get('equipos') || [];
     } catch (error) {
       this.showErrorAlert('Error cargando data', (error as Error).message);
     } finally {

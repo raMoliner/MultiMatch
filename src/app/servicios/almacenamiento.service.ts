@@ -1,7 +1,8 @@
+// almacenamiento.service.ts
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { from, Observable } from 'rxjs';
-import { Usuario, Equipo, Reserva, Partido } from '../models/models';
+import { Usuario, Equipo, Reserva, Partido, Club, Cancha } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -18,213 +19,198 @@ export class AlmacenamientoService {
     this._storage = storage;
   }
 
-  async set<T>(key: string, value: T): Promise<void> {
-    try {
-      console.log(`Set ${key}:`, value);
-      await this._storage?.set(key, value);
-    } catch (error) {
-      console.error(`Error setting ${key}:`, error);
-    }
+  async set(key: string, value: any): Promise<any> {
+    console.log(`Set ${key}:`, value);
+    return this._storage?.set(key, value);
   }
 
-  async get<T>(key: string): Promise<T | null> {
-    try {
-      const value = await this._storage?.get(key);
-      console.log(`Get ${key}:`, value);
-      return value;
-    } catch (error) {
-      console.error(`Error getting ${key}:`, error);
-      return null;
-    }
+  async get(key: string): Promise<any> {
+    const value = await this._storage?.get(key);
+    console.log(`Get ${key}:`, value);
+    return value;
   }
 
   async clear(): Promise<void> {
-    try {
-      await this._storage?.clear();
-      console.log('Almacenamiento limpiado');
-    } catch (error) {
-      console.error('Error clearing storage:', error);
-    }
+    await this._storage?.clear();
+    console.log('Almacenamiento limpiado');
   }
 
   // Métodos de Usuario
-  setUsuarios(usuarios: Usuario[]): Promise<void> {
-    return this.set('usuarios', usuarios);
+  setUsuarios(usuarios: Usuario[]): Promise<any> {
+    return this._storage?.set('usuarios', usuarios) as Promise<any>;
   }
 
   getUsuarios(): Observable<Usuario[]> {
-    return from(this.get<Usuario[]>('usuarios').then(data => data || []));
+    return from(this._storage?.get('usuarios') || Promise.resolve([]));
   }
 
   async addUsuario(usuario: Usuario): Promise<void> {
-    try {
-      const usuarios = await this.get<Usuario[]>('usuarios') || [];
-      usuarios.push(usuario);
-      await this.set('usuarios', usuarios);
-      console.log('Usuario agregado:', usuario);
-    } catch (error) {
-      console.error('Error adding usuario:', error);
-    }
+    const usuarios = await this._storage?.get('usuarios') || [];
+    usuarios.push(usuario);
+    await this._storage?.set('usuarios', usuarios);
+    console.log('Usuario agregado:', usuario);
   }
 
   async getUsuarioByEmail(email: string): Promise<Usuario | undefined> {
-    try {
-      const usuarios = await this.get<Usuario[]>('usuarios') || [];
-      const usuario = usuarios.find(user => user.email === email);
-      console.log('Usuario encontrado por email:', usuario);
-      return usuario;
-    } catch (error) {
-      console.error('Error getting usuario by email:', error);
-      return undefined;
-    }
+    const usuarios = await this._storage?.get('usuarios') || [];
+    const usuario = usuarios.find((user: Usuario) => user.email === email);
+    console.log('Usuario encontrado por email:', usuario);
+    return usuario;
   }
 
   async updateUsuario(updatedUsuario: Usuario): Promise<void> {
-    try {
-      const usuarios = await this.get<Usuario[]>('usuarios') || [];
-      const index = usuarios.findIndex(user => user.id === updatedUsuario.id);
-      if (index > -1) {
-        usuarios[index] = updatedUsuario;
-        await this.set('usuarios', usuarios);
-      }
-    } catch (error) {
-      console.error('Error updating usuario:', error);
+    const usuarios = await this._storage?.get('usuarios') || [];
+    const index = usuarios.findIndex((user: Usuario) => user.id === updatedUsuario.id);
+    if (index > -1) {
+      usuarios[index] = updatedUsuario;
+      await this._storage?.set('usuarios', usuarios);
     }
   }
 
   async deleteUsuario(id: string): Promise<void> {
-    try {
-      let usuarios = await this.get<Usuario[]>('usuarios') || [];
-      usuarios = usuarios.filter(user => user.id !== id);
-      await this.set('usuarios', usuarios);
-    } catch (error) {
-      console.error('Error deleting usuario:', error);
-    }
+    let usuarios = await this._storage?.get('usuarios') || [];
+    usuarios = usuarios.filter((user: Usuario) => user.id !== id);
+    await this._storage?.set('usuarios', usuarios);
   }
 
   // Métodos de Equipo
-  setEquipos(equipos: Equipo[]): Promise<void> {
-    return this.set('equipos', equipos);
+  setEquipos(equipos: Equipo[]): Promise<any> {
+    return this._storage?.set('equipos', equipos) as Promise<any>;
   }
 
   getEquipos(): Observable<Equipo[]> {
-    return from(this.get<Equipo[]>('equipos').then(data => data || []));
+    return from(this._storage?.get('equipos') || Promise.resolve([]));
   }
 
   async addEquipo(equipo: Equipo): Promise<void> {
-    try {
-      const equipos = await this.get<Equipo[]>('equipos') || [];
-      equipos.push(equipo);
-      await this.set('equipos', equipos);
-    } catch (error) {
-      console.error('Error adding equipo:', error);
-    }
+    const equipos = await this._storage?.get('equipos') || [];
+    equipos.push(equipo);
+    await this._storage?.set('equipos', equipos);
   }
 
   async updateEquipo(updatedEquipo: Equipo): Promise<void> {
-    try {
-      const equipos = await this.get<Equipo[]>('equipos') || [];
-      const index = equipos.findIndex(e => e.id === updatedEquipo.id);
-      if (index > -1) {
-        equipos[index] = updatedEquipo;
-        await this.set('equipos', equipos);
-      }
-    } catch (error) {
-      console.error('Error updating equipo:', error);
+    const equipos = await this._storage?.get('equipos') || [];
+    const index = equipos.findIndex((e: Equipo) => e.id === updatedEquipo.id);
+    if (index > -1) {
+      equipos[index] = updatedEquipo;
+      await this._storage?.set('equipos', equipos);
     }
   }
 
   async deleteEquipo(id: string): Promise<void> {
-    try {
-      let equipos = await this.get<Equipo[]>('equipos') || [];
-      equipos = equipos.filter(e => e.id !== id);
-      await this.set('equipos', equipos);
-    } catch (error) {
-      console.error('Error deleting equipo:', error);
-    }
+    let equipos = await this._storage?.get('equipos') || [];
+    equipos = equipos.filter((e: Equipo) => e.id !== id);
+    await this._storage?.set('equipos', equipos);
   }
 
   // Métodos de Reserva
-  setReservas(reservas: Reserva[]): Promise<void> {
-    return this.set('reservas', reservas);
+  setReservas(reservas: Reserva[]): Promise<any> {
+    return this._storage?.set('reservas', reservas) as Promise<any>;
   }
 
   getReservas(): Observable<Reserva[]> {
-    return from(this.get<Reserva[]>('reservas').then(data => data || []));
+    return from(this._storage?.get('reservas') || Promise.resolve([]));
   }
 
   async addReserva(reserva: Reserva): Promise<void> {
-    try {
-      const reservas = await this.get<Reserva[]>('reservas') || [];
-      reservas.push(reserva);
-      await this.set('reservas', reservas);
-    } catch (error) {
-      console.error('Error adding reserva:', error);
-    }
+    const reservas = await this._storage?.get('reservas') || [];
+    reservas.push(reserva);
+    await this._storage?.set('reservas', reservas);
   }
 
   async updateReserva(updatedReserva: Reserva): Promise<void> {
-    try {
-      const reservas = await this.get<Reserva[]>('reservas') || [];
-      const index = reservas.findIndex(r => r.id === updatedReserva.id);
-      if (index > -1) {
-        reservas[index] = updatedReserva;
-        await this.set('reservas', reservas);
-      }
-    } catch (error) {
-      console.error('Error updating reserva:', error);
+    const reservas = await this._storage?.get('reservas') || [];
+    const index = reservas.findIndex((r: Reserva) => r.id === updatedReserva.id);
+    if (index > -1) {
+      reservas[index] = updatedReserva;
+      await this._storage?.set('reservas', reservas);
     }
   }
 
   async deleteReserva(id: string): Promise<void> {
-    try {
-      let reservas = await this.get<Reserva[]>('reservas') || [];
-      reservas = reservas.filter(r => r.id !== id);
-      await this.set('reservas', reservas);
-    } catch (error) {
-      console.error('Error deleting reserva:', error);
-    }
+    let reservas = await this._storage?.get('reservas') || [];
+    reservas = reservas.filter((r: Reserva) => r.id !== id);
+    await this._storage?.set('reservas', reservas);
   }
 
   // Métodos de Partido
-  setPartidos(partidos: Partido[]): Promise<void> {
-    return this.set('partidos', partidos);
+  setPartidos(partidos: Partido[]): Promise<any> {
+    return this._storage?.set('partidos', partidos) as Promise<any>;
   }
 
   getPartidos(): Observable<Partido[]> {
-    return from(this.get<Partido[]>('partidos').then(data => data || []));
+    return from(this._storage?.get('partidos') || Promise.resolve([]));
   }
 
   async addPartido(partido: Partido): Promise<void> {
-    try {
-      const partidos = await this.get<Partido[]>('partidos') || [];
-      partidos.push(partido);
-      await this.set('partidos', partidos);
-    } catch (error) {
-      console.error('Error adding partido:', error);
-    }
+    const partidos = await this._storage?.get('partidos') || [];
+    partidos.push(partido);
+    await this._storage?.set('partidos', partidos);
   }
 
   async updatePartido(updatedPartido: Partido): Promise<void> {
-    try {
-      const partidos = await this.get<Partido[]>('partidos') || [];
-      const index = partidos.findIndex(p => p.id === updatedPartido.id);
-      if (index > -1) {
-        partidos[index] = updatedPartido;
-        await this.set('partidos', partidos);
-      }
-    } catch (error) {
-      console.error('Error updating partido:', error);
+    const partidos = await this._storage?.get('partidos') || [];
+    const index = partidos.findIndex((p: Partido) => p.id === updatedPartido.id);
+    if (index > -1) {
+      partidos[index] = updatedPartido;
+      await this._storage?.set('partidos', partidos);
     }
   }
 
   async deletePartido(id: string): Promise<void> {
-    try {
-      let partidos = await this.get<Partido[]>('partidos') || [];
-      partidos = partidos.filter(p => p.id !== id);
-      await this.set('partidos', partidos);
-    } catch (error) {
-      console.error('Error deleting partido:', error);
+    let partidos = await this._storage?.get('partidos') || [];
+    partidos = partidos.filter((p: Partido) => p.id !== id);
+    await this._storage?.set('partidos', partidos);
+  }
+
+  // Métodos de Club
+  async addClub(club: Club): Promise<void> {
+    const clubs = await this._storage?.get('clubs') || [];
+    clubs.push(club);
+    await this._storage?.set('clubs', clubs);
+  }
+
+  async updateClub(updatedClub: Club): Promise<void> {
+    const clubs = await this._storage?.get('clubs') || [];
+    const index = clubs.findIndex((c: Club) => c.id === updatedClub.id);
+    if (index > -1) {
+      clubs[index] = updatedClub;
+      await this._storage?.set('clubs', clubs);
     }
+  }
+
+  async deleteClub(id: string): Promise<void> {
+    let clubs = await this._storage?.get('clubs') || [];
+    clubs = clubs.filter((c: Club) => c.id !== id);
+    await this._storage?.set('clubs', clubs);
+  }
+
+  async addCanchaToClub(clubId: string, cancha: Cancha): Promise<void> {
+    const clubs = await this._storage?.get('clubs') || [];
+    const clubIndex = clubs.findIndex((c: Club) => c.id === clubId);
+    if (clubIndex > -1) {
+      clubs[clubIndex].canchas.push(cancha);
+      await this._storage?.set('clubs', clubs);
+    }
+  }
+
+  async deleteCanchaFromClub(clubId: string, canchaId: string): Promise<void> {
+    const clubs = await this._storage?.get('clubs') || [];
+    const clubIndex = clubs.findIndex((c: Club) => c.id === clubId);
+    if (clubIndex > -1) {
+      clubs[clubIndex].canchas = clubs[clubIndex].canchas.filter((cancha: Cancha) => cancha.id !== canchaId);
+      await this._storage?.set('clubs', clubs);
+    }
+  }
+
+  getClubs(): Observable<Club[]> {
+    return from(this._storage?.get('clubs') || Promise.resolve([]));
+  }
+
+  generateId(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 }

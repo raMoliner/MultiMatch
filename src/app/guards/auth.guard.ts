@@ -18,14 +18,14 @@ export class AuthGuard implements CanActivate {
 
   private async checkLoginStatus(): Promise<boolean | UrlTree> {
     try {
-      const isLoggedIn = await this.almacenamientoService.get<boolean>('isLoggedIn');
+      const isLoggedIn = await this.almacenamientoService.get('isLoggedIn');
       if (isLoggedIn) {
         return true;
       } else {
         return this.router.parseUrl('/login');
       }
     } catch (error) {
-      console.error('Error checking login status:', error);
+      console.error('Error checkeando estatus de login:', error);
       return this.router.parseUrl('/login');
     }
   }

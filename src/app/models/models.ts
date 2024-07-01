@@ -7,6 +7,7 @@ export interface Usuario {
   rut: string;
   edad: number;
   posicion: string;
+  comuna: string;
   foto?: string;
   password?: string;
 }
@@ -28,8 +29,24 @@ export interface Reserva {
 export interface Partido {
   id: string;
   equipo1: Equipo;
-  equipo2: Equipo;
+  equipo2?: Equipo;
   fecha: string;
   hora: string;
   lugar: string;
+}
+
+export interface Club {
+  id: string;
+  nombre: string;
+  rut: string;
+  direccion: string;
+  comuna: string;
+  canchas: Cancha[];
+}
+
+export interface Cancha {
+  id: string;
+  clubId: string;
+  nombre: string;
+  tipo: string;
 }

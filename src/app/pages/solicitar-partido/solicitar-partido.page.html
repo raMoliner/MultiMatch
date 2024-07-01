@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Solicitar Partido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Fecha</ion-label>
+      <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="fecha"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Hora</ion-label>
+      <ion-datetime display-format="HH:mm" picker-format="HH:mm" [(ngModel)]="hora"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Cancha</ion-label>
+      <ion-select [(ngModel)]="canchaSeleccionada">
+        <ion-select-option *ngFor="let cancha of canchasSugeridas" [value]="cancha.nombre">{{ cancha.nombre }} - {{ cancha.tipo }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="full" (click)="solicitarPartido()">Solicitar Partido</ion-button>
+</ion-content>

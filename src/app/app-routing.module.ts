@@ -12,7 +12,19 @@ const routes: Routes = [
   { path: 'equipo', loadChildren: () => import('./pages/equipo/equipo.module').then(m => m.EquipoPageModule), canActivate: [AuthGuard] },
   { path: 'reserva', loadChildren: () => import('./pages/reserva/reserva.module').then(m => m.ReservaPageModule), canActivate: [AuthGuard] },
   { path: 'partido', loadChildren: () => import('./pages/partido/partido.module').then(m => m.PartidoPageModule), canActivate: [AuthGuard] },
-  { path: 'logout', component: LogoutComponent }
+  { path: 'logout', component: LogoutComponent },
+  {
+    path: 'club-admin',
+    loadChildren: () => import('./pages/club-admin/club-admin.module').then( m => m.ClubAdminPageModule)
+  },
+  {
+    path: 'jugador-admin',
+    loadChildren: () => import('./pages/jugador-admin/jugador-admin.module').then( m => m.JugadorAdminPageModule)
+  },
+  {
+    path: 'solicitar-partido',
+    loadChildren: () => import('./pages/solicitar-partido/solicitar-partido.module').then( m => m.SolicitarPartidoPageModule)
+  }
 ];
 
 @NgModule({

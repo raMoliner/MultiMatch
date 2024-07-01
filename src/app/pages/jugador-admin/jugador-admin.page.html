@@ -1,16 +1,17 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Administración de Equipo</ion-title>
+    <ion-title>Administración de Jugadores</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <h2>Miembros del Equipo</h2>
   <ion-list>
-    <ion-item *ngFor="let miembro of equipo?.miembros">
+    <ion-item *ngFor="let miembro of miembros">
       <ion-label>
         <h3>{{ miembro.nombre }} {{ miembro.apellidoPaterno }}</h3>
       </ion-label>
+      <ion-button (click)="deleteMiembro(miembro.id)" color="danger">Eliminar</ion-button>
     </ion-item>
   </ion-list>
 
@@ -18,5 +19,5 @@
     <ion-label position="floating">Email del Miembro</ion-label>
     <ion-input [(ngModel)]="emailMiembro"></ion-input>
   </ion-item>
-  <ion-button expand="full" (click)="agregarMiembro()">Agregar Miembro</ion-button>
+  <ion-button expand="full" (click)="addMiembro()">Agregar Miembro</ion-button>
 </ion-content>

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NavController, AlertController } from '@ionic/angular';
 import { UsuariosService } from 'src/app/servicios/usuarios.service';
-import { AlertController, NavController } from '@ionic/angular';
-import { CameraService } from 'src/app/servicios/camera.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
@@ -12,89 +11,58 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
-  photo: string = '';
+  esClub: boolean = false;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private usuariosService: UsuariosService,
-    private alertController: AlertController,
     private navCtrl: NavController,
-    private cameraService: CameraService
+    private alertController: AlertController
   ) {
-    this.registerForm = this.formBuilder.group({
-      nombre: ['', [Validators.required]],
-      apellidoPaterno: ['', [Validators.required]],
-      apellidoMaterno: ['', [Validators.required]],
+    this.registerForm = this.fb.group({
+      nombre: ['', Validators.required],
+      apellidoPaterno: ['', Validators.required],
+      apellidoMaterno: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      rut: ['', [Validators.required]],
-      edad: ['', [Validators.required, Validators.min(18)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-      posicion: ['', [Validators.required]] // Added field for Posición
+      rut: ['', Validators.required],
+      edad: ['', Validators.required],
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required],
+      comuna: ['', Validators.required]
     }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit() {}
 
   passwordMatchValidator(formGroup: FormGroup) {
-    return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value 
-      ? null : { 'mismatch': true };
+    return formGroup.get('password')!.value === formGroup.get('confirmPassword')!.value
+      ? null : { mismatch: true };
   }
 
-  async onRegister() {
+  async register() {
     if (this.registerForm.valid) {
-      const { nombre, apellidoPaterno, apellidoMaterno, email, rut, edad, password, posicion } = this.registerForm.value;
       const nuevoUsuario = {
         id: uuidv4(),
-        nombre: this.capitalizeFirstLetter(nombre),
-        apellidoPaterno: this.capitalizeFirstLetter(apellidoPaterno),
-        apellidoMaterno: this.capitalizeFirstLetter(apellidoMaterno),
-        email,
-        rut,
-        edad,
-        password,
-        posicion,
-        foto: this.photo || 'assets/default-avatar.png'
+        nombre: this.registerForm.get('nombre')!.value,
+        apellidoPaterno: this.registerForm.get('apellidoPaterno')!.value,
+        apellidoMaterno: this.registerForm.get('apellidoMaterno')!.value,
+        email: this.registerForm.get('email')!.value,
+        rut: this.registerForm.get('rut')!.value,
+        edad: this.registerForm.get('edad')!.value,
+        password: this.registerForm.get('password')!.value,
+        comuna: this.registerForm.get('comuna')!.value,
+        posicion: '',
+        foto: ''
       };
 
-      try {
-        await this.usuariosService.addUsuario(nuevoUsuario);
-        const alert = await this.alertController.create({
-          header: 'Éxito',
-          message: 'Registro exitoso.',
-          buttons: ['OK']
-        });
-        await alert.present();
-        this.navCtrl.navigateRoot('/login');
-      } catch (error) {
-        const alert = await this.alertController.create({
-          header: 'Error',
-          message: (error as Error).message,
-          buttons: ['OK']
-        });
-        await alert.present();
-      }
-    }
-  }
-
-  async takePicture() {
-    try {
-      this.photo = await this.cameraService.takePicture();
-    } catch (err) {
+      await this.usuariosService.addUsuario(nuevoUsuario);
       const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'No se pudo tomar la foto: ' + err,
+        header: 'Registro Exitoso',
+        message: 'Usuario registrado correctamente',
         buttons: ['OK']
       });
       await alert.present();
+      this.navCtrl.navigateRoot('/login');
     }
-  }
-
-  capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  }
-
-  irARegistro() {
-    this.navCtrl.navigateForward('/login');
   }
 }
