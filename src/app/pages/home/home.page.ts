@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 import { HttpClient } from '@angular/common/http';
 import { NavController, AlertController, LoadingController } from '@ionic/angular';
-import { Partido, Usuario, Equipo } from 'src/app/models/models';
+import { Partido, Usuario, Equipo, Club, Cancha } from 'src/app/models/models';
 
 @Component({
   selector: 'app-home',
@@ -36,9 +36,9 @@ export class HomePage implements OnInit {
     await loading.present();
 
     try {
-      this.partidos = await this.almacenamientoService.get('partidos') || [];
-      this.jugadoresSinEquipo = await this.almacenamientoService.get('usuarios') || [];
-      this.equiposBuscandoContrincante = await this.almacenamientoService.get('equipos') || [];
+      this.partidos = await this.almacenamientoService.getPartidos().toPromise() || [];
+      this.jugadoresSinEquipo = await this.almacenamientoService.getUsuarios().toPromise() || [];
+      this.equiposBuscandoContrincante = await this.almacenamientoService.getEquipos().toPromise() || [];
     } catch (error) {
       this.showErrorAlert('Error cargando data', (error as Error).message);
     } finally {

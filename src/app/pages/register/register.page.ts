@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NavController, AlertController } from '@ionic/angular';
-import { UsuariosService } from 'src/app/servicios/usuarios.service';
-import { v4 as uuidv4 } from 'uuid';
+import { LoadingController, NavController } from '@ionic/angular';
+import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
+import { Usuario, Club } from 'src/app/models/models';
 
 @Component({
   selector: 'app-register',
@@ -11,58 +11,75 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
-  esClub: boolean = false;
+  photo: string = '';
 
   constructor(
     private fb: FormBuilder,
-    private usuariosService: UsuariosService,
     private navCtrl: NavController,
-    private alertController: AlertController
+    private almacenamientoService: AlmacenamientoService,
+    private loadingController: LoadingController
   ) {
     this.registerForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellidoPaterno: ['', Validators.required],
-      apellidoMaterno: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      rut: ['', Validators.required],
-      edad: ['', Validators.required],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
-      comuna: ['', Validators.required]
-    }, { validator: this.passwordMatchValidator });
+      tipoUsuario: ['jugador', Validators.required],
+      nombre: [''],
+      apellidoPaterno: [''],
+      apellidoMaterno: [''],
+      email: [''],
+      rut: [''],
+      edad: [''],
+      comuna: [''],
+      password: [''],
+      confirmPassword: [''],
+      posicion: [''],
+      buscandoEquipo: [false],
+      nombreClub: [''],
+      rutClub: [''],
+      direccionClub: [''],
+      comunaClub: ['']
+    });
   }
 
   ngOnInit() {}
 
-  passwordMatchValidator(formGroup: FormGroup) {
-    return formGroup.get('password')!.value === formGroup.get('confirmPassword')!.value
-      ? null : { mismatch: true };
-  }
+  async onSubmit() {
+    const loading = await this.loadingController.create({
+      message: 'Registrando...',
+    });
+    await loading.present();
 
-  async register() {
-    if (this.registerForm.valid) {
-      const nuevoUsuario = {
-        id: uuidv4(),
-        nombre: this.registerForm.get('nombre')!.value,
-        apellidoPaterno: this.registerForm.get('apellidoPaterno')!.value,
-        apellidoMaterno: this.registerForm.get('apellidoMaterno')!.value,
-        email: this.registerForm.get('email')!.value,
-        rut: this.registerForm.get('rut')!.value,
-        edad: this.registerForm.get('edad')!.value,
-        password: this.registerForm.get('password')!.value,
-        comuna: this.registerForm.get('comuna')!.value,
-        posicion: '',
-        foto: ''
+    const formValues = this.registerForm.value;
+    const tipoUsuario = formValues.tipoUsuario;
+
+    if (tipoUsuario === 'jugador') {
+      const nuevoUsuario: Usuario = {
+        id: this.almacenamientoService.generateId(),
+        nombre: formValues.nombre,
+        apellidoPaterno: formValues.apellidoPaterno,
+        apellidoMaterno: formValues.apellidoMaterno,
+        email: formValues.email,
+        rut: formValues.rut,
+        edad: formValues.edad,
+        comuna: formValues.comuna,
+        password: formValues.password,
+        posicion: formValues.posicion,
+        foto: this.photo
       };
 
-      await this.usuariosService.addUsuario(nuevoUsuario);
-      const alert = await this.alertController.create({
-        header: 'Registro Exitoso',
-        message: 'Usuario registrado correctamente',
-        buttons: ['OK']
-      });
-      await alert.present();
-      this.navCtrl.navigateRoot('/login');
+      await this.almacenamientoService.addUsuario(nuevoUsuario);
+    } else if (tipoUsuario === 'club') {
+      const nuevoClub: Club = {
+        id: this.almacenamientoService.generateId(),
+        nombre: formValues.nombreClub,
+        rut: formValues.rutClub,
+        direccion: formValues.direccionClub,
+        comuna: formValues.comunaClub,
+        canchas: []
+      };
+
+      await this.almacenamientoService.addClub(nuevoClub);
     }
+
+    await loading.dismiss();
+    this.navCtrl.navigateRoot('/login');
   }
 }

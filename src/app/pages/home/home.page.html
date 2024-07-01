@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>¡Bienvenid&#64; !</ion-title>
+    <ion-title>¡Bienvenid&#64;!</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -9,7 +9,7 @@
   <ion-list>
     <ion-item *ngFor="let partido of partidos; trackBy: trackById">
       <ion-label>
-        <h3>{{ partido.equipo1.nombre }} vs {{ partido.equipo2?.nombre }}</h3>
+        <h3>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</h3>
         <p>{{ partido.fecha }} - {{ partido.hora }}</p>
       </ion-label>
     </ion-item>

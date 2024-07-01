@@ -5,79 +5,81 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="registerForm" (ngSubmit)="register()">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input formControlName="nombre"></ion-input>
+      <ion-label>Tipo de Usuario</ion-label>
+      <ion-select formControlName="tipoUsuario">
+        <ion-select-option value="jugador">Jugador</ion-select-option>
+        <ion-select-option value="club">Club</ion-select-option>
+      </ion-select>
     </ion-item>
-    <ion-note *ngIf="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched" color="danger">
-      Nombre es requerido
-    </ion-note>
 
-    <ion-item>
-      <ion-label position="floating">Apellido Paterno</ion-label>
-      <ion-input formControlName="apellidoPaterno"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('apellidoPaterno')?.invalid && registerForm.get('apellidoPaterno')?.touched" color="danger">
-      Apellido Paterno es requerido
-    </ion-note>
+    <div *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+      <ion-item>
+        <ion-label>Nombre</ion-label>
+        <ion-input formControlName="nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Apellido Paterno</ion-label>
+        <ion-input formControlName="apellidoPaterno"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Apellido Materno</ion-label>
+        <ion-input formControlName="apellidoMaterno"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Email</ion-label>
+        <ion-input formControlName="email" type="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>RUT</ion-label>
+        <ion-input formControlName="rut"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Edad</ion-label>
+        <ion-input formControlName="edad" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Comuna</ion-label>
+        <ion-input formControlName="comuna"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Contraseña</ion-label>
+        <ion-input formControlName="password" type="password"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Confirmar Contraseña</ion-label>
+        <ion-input formControlName="confirmPassword" type="password"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Posición</ion-label>
+        <ion-input formControlName="posicion"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Buscando equipo</ion-label>
+        <ion-toggle formControlName="buscandoEquipo"></ion-toggle>
+      </ion-item>
+    </div>
 
-    <ion-item>
-      <ion-label position="floating">Apellido Materno</ion-label>
-      <ion-input formControlName="apellidoMaterno"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('apellidoMaterno')?.invalid && registerForm.get('apellidoMaterno')?.touched" color="danger">
-      Apellido Materno es requerido
-    </ion-note>
+    <div *ngIf="registerForm.get('tipoUsuario')?.value === 'club'">
+      <ion-item>
+        <ion-label>Nombre del Club</ion-label>
+        <ion-input formControlName="nombreClub"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>RUT del Club</ion-label>
+        <ion-input formControlName="rutClub"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Dirección</ion-label>
+        <ion-input formControlName="direccionClub"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Comuna</ion-label>
+        <ion-input formControlName="comunaClub"></ion-input>
+      </ion-item>
+    </div>
 
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input formControlName="email" type="email"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" color="danger">
-      Email es requerido y debe ser válido
-    </ion-note>
-
-    <ion-item>
-      <ion-label position="floating">RUT</ion-label>
-      <ion-input formControlName="rut"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('rut')?.invalid && registerForm.get('rut')?.touched" color="danger">
-      RUT es requerido
-    </ion-note>
-
-    <ion-item>
-      <ion-label position="floating">Edad</ion-label>
-      <ion-input formControlName="edad" type="number"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('edad')?.invalid && registerForm.get('edad')?.touched" color="danger">
-      Edad es requerida
-    </ion-note>
-
-    <ion-item>
-      <ion-label position="floating">Comuna</ion-label>
-      <ion-input formControlName="comuna"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('comuna')?.invalid && registerForm.get('comuna')?.touched" color="danger">
-      Comuna es requerida
-    </ion-note>
-
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input formControlName="password" type="password"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" color="danger">
-      La contraseña es requerida
-    </ion-note>
-
-    <ion-item>
-      <ion-label position="floating">Confirmar Contraseñas</ion-label>
-      <ion-input formControlName="confirmPassword" type="password"></ion-input>
-    </ion-item>
-    <ion-note *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" color="danger">
-      Las contraseñas no coinciden
-    </ion-note>
-
-    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">Registrar</ion-button>
+    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">Registrarse</ion-button>
   </form>
 </ion-content>

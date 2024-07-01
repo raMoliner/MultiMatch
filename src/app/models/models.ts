@@ -24,15 +24,17 @@ export interface Reserva {
   fecha: string;
   hora: string;
   equipo: Equipo;
+  cancha: Cancha;
 }
 
 export interface Partido {
   id: string;
   equipo1: Equipo;
-  equipo2?: Equipo;
+  equipo2: Equipo;
   fecha: string;
   hora: string;
   lugar: string;
+  cancha: Cancha;
 }
 
 export interface Club {
@@ -49,4 +51,5 @@ export interface Cancha {
   clubId: string;
   nombre: string;
   tipo: string;
+  bloqueada: boolean;
 }

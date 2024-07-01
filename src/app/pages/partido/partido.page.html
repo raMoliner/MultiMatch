@@ -4,15 +4,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="partido">
   <ion-list>
-    <ion-item *ngFor="let partido of partidos">
-      <ion-label>
-        {{ partido.equipo1.nombre }} vs {{ partido.equipo2?.nombre }} <br>
-        {{ partido.fecha }} - {{ partido.hora }} <br>
-        {{ partido.lugar }}
-      </ion-label>
+    <ion-item>
+      {{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }} <br>
+      Fecha: {{ partido.fecha }} <br>
+      Hora: {{ partido.hora }} <br>
+      Lugar: {{ partido.lugar }} <br>
+      Cancha: {{ partido.cancha.nombre }}
     </ion-item>
   </ion-list>
-  <ion-button expand="full" (click)="nuevoPartido()">Nuevo Partido</ion-button>
 </ion-content>
