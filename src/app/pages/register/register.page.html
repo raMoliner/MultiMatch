@@ -14,72 +14,77 @@
       </ion-select>
     </ion-item>
 
+    <!-- Campos comunes para todos los usuarios -->
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="nombre"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Apellido Paterno</ion-label>
+      <ion-input formControlName="apellidoPaterno"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Apellido Materno</ion-label>
+      <ion-input formControlName="apellidoMaterno"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input formControlName="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">RUT</ion-label>
+      <ion-input formControlName="rut"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Edad</ion-label>
+      <ion-input formControlName="edad"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Región</ion-label>
+      <ion-select formControlName="region">
+        <ion-select-option *ngFor="let region of regionesComunas" [value]="region.region">{{ region.region }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Comuna</ion-label>
+      <ion-select formControlName="comuna" [disabled]="comunas.length === 0">
+        <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
+
+    <!-- Campos específicos para jugadores -->
     <div *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
       <ion-item>
-        <ion-label>Nombre</ion-label>
-        <ion-input formControlName="nombre"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Apellido Paterno</ion-label>
-        <ion-input formControlName="apellidoPaterno"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Apellido Materno</ion-label>
-        <ion-input formControlName="apellidoMaterno"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Email</ion-label>
-        <ion-input formControlName="email" type="email"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>RUT</ion-label>
-        <ion-input formControlName="rut"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Edad</ion-label>
-        <ion-input formControlName="edad" type="number"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Comuna</ion-label>
-        <ion-input formControlName="comuna"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Contraseña</ion-label>
-        <ion-input formControlName="password" type="password"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Confirmar Contraseña</ion-label>
-        <ion-input formControlName="confirmPassword" type="password"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Posición</ion-label>
+        <ion-label position="floating">Posición</ion-label>
         <ion-input formControlName="posicion"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label>Buscando equipo</ion-label>
+        <ion-label position="floating">Foto</ion-label>
+        <ion-input formControlName="foto"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Buscando Equipo</ion-label>
         <ion-toggle formControlName="buscandoEquipo"></ion-toggle>
       </ion-item>
     </div>
 
+    <!-- Campos específicos para clubes -->
     <div *ngIf="registerForm.get('tipoUsuario')?.value === 'club'">
-      <ion-item>
-        <ion-label>Nombre del Club</ion-label>
-        <ion-input formControlName="nombreClub"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>RUT del Club</ion-label>
-        <ion-input formControlName="rutClub"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Dirección</ion-label>
-        <ion-input formControlName="direccionClub"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Comuna</ion-label>
-        <ion-input formControlName="comunaClub"></ion-input>
-      </ion-item>
+      <!-- Agrega campos específicos para clubes aquí -->
     </div>
 
-    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">Registrarse</ion-button>
+    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">Registrar</ion-button>
   </form>
 </ion-content>

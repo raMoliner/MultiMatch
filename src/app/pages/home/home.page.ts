@@ -14,7 +14,10 @@ export class HomePage implements OnInit {
   jugadoresSinEquipo: Usuario[] = [];
   equiposBuscandoContrincante: Equipo[] = [];
   jugadoresDestacados: any[] = [];
+  clubCanchas: Cancha[] = [];
   isLoading = true;
+  isClub = false;
+  maxJugadoresMostrar = 5;
 
   constructor(
     private almacenamientoService: AlmacenamientoService,
@@ -36,9 +39,21 @@ export class HomePage implements OnInit {
     await loading.present();
 
     try {
-      this.partidos = await this.almacenamientoService.getPartidos().toPromise() || [];
-      this.jugadoresSinEquipo = await this.almacenamientoService.getUsuarios().toPromise() || [];
-      this.equiposBuscandoContrincante = await this.almacenamientoService.getEquipos().toPromise() || [];
+      const currentUser = await this.almacenamientoService.getCurrentUser();
+      if (currentUser && currentUser.tipoUsuario) {
+        this.isClub = currentUser.tipoUsuario === 'club';
+
+        if (this.isClub) {
+          const club = await this.almacenamientoService.getClubById(currentUser.id);
+          if (club) {
+            this.clubCanchas = club.canchas;
+          }
+        } else {
+          this.partidos = await this.almacenamientoService.get<Partido[]>('partidos') || [];
+          this.jugadoresSinEquipo = await this.almacenamientoService.get<Usuario[]>('usuarios') || [];
+          this.equiposBuscandoContrincante = await this.almacenamientoService.get<Equipo[]>('equipos') || [];
+        }
+      }
     } catch (error) {
       this.showErrorAlert('Error cargando data', (error as Error).message);
     } finally {
@@ -70,6 +85,10 @@ export class HomePage implements OnInit {
 
   verJugador(jugador: any) {
     this.navCtrl.navigateForward(`/jugador/${jugador.id}`);
+  }
+
+  verMasJugadores() {
+    this.navCtrl.navigateForward('/jugadores-buscando-equipo');
   }
 
   trackById(index: number, item: any): number {

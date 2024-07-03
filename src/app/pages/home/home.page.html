@@ -1,50 +1,57 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>¡Bienvenid&#64;!</ion-title>
+    <ion-title *ngIf="isClub">Administración del Club</ion-title>
+    <ion-title *ngIf="!isClub">¡Bienvenid&#64;!</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <h2>Próximos Partidos</h2>
-  <ion-list>
-    <ion-item *ngFor="let partido of partidos; trackBy: trackById">
-      <ion-label>
-        <h3>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</h3>
-        <p>{{ partido.fecha }} - {{ partido.hora }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  <div *ngIf="isClub">
+    <h2>Canchas Registradas</h2>
+    <ion-list>
+      <ion-item *ngFor="let cancha of clubCanchas">
+        <ion-label>
+          <h3>{{ cancha.nombre }}</h3>
+          <p>{{ cancha.tipo }} - {{ cancha.bloqueada ? 'No Disponible' : 'Disponible' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 
-  <h2>Jugadores buscando equipo</h2>
-  <ion-list>
-    <ion-item *ngFor="let jugador of jugadoresSinEquipo; trackBy: trackById" (click)="verJugador(jugador)">
-      <ion-label>
-        <h3>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</h3>
-        <p>{{ jugador.posicion }} - {{ jugador.edad }} años</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  <div *ngIf="!isClub">
+    <h2>Próximos Partidos</h2>
+    <ion-list>
+      <ion-item *ngFor="let partido of partidos; trackBy: trackById">
+        <ion-label>
+          <h3>{{ partido.equipo1.nombre }} vs {{ partido.equipo2.nombre }}</h3>
+          <p>{{ partido.fecha }} - {{ partido.hora }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
 
-  <h2>Equipos buscando contrincante</h2>
-  <ion-list>
-    <ion-item *ngFor="let equipo of equiposBuscandoContrincante; trackBy: trackById">
-      <ion-label>
-        <h3>{{ equipo.nombre }}</h3>
-        <p>Buscando contrincante para jugar en {{ equipo.lugar }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+    <h2>Jugadores buscando equipo</h2>
+    <ion-list>
+      <ion-item *ngFor="let jugador of jugadoresSinEquipo; trackBy: trackById" (click)="verJugador(jugador)">
+        <ion-label>
+          <h3>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</h3>
+          <p>{{ jugador.posicion }} - {{ jugador.edad }} años</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="jugadoresSinEquipo.length > maxJugadoresMostrar">
+        <ion-label>
+          <ion-button (click)="verMasJugadores()">Ver más jugadores</ion-button>
+        </ion-label>
+      </ion-item>
+    </ion-list>
 
-  <h2>Jugadores Destacados</h2>
-  <ion-list>
-    <ion-item *ngFor="let jugador of jugadoresDestacados; trackBy: trackById">
-      <ion-avatar slot="start">
-        <img [src]="jugador.image" alt="{{ jugador.name }}" />
-      </ion-avatar>
-      <ion-label>
-        <h3>{{ jugador.name }}</h3>
-        <p>{{ jugador.gender }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+    <h2>Equipos buscando contrincante</h2>
+    <ion-list>
+      <ion-item *ngFor="let equipo of equiposBuscandoContrincante; trackBy: trackById">
+        <ion-label>
+          <h3>{{ equipo.nombre }}</h3>
+          <p>Buscando contrincante para jugar en {{ equipo.lugar }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

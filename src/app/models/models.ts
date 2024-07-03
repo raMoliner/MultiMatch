@@ -10,6 +10,8 @@ export interface Usuario {
   comuna: string;
   foto?: string;
   password?: string;
+  tipoUsuario: string;
+  buscandoEquipo: boolean;
 }
 
 export interface Equipo {
