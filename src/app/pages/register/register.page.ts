@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController, AlertController, LoadingController } from '@ionic/angular';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 import { Usuario } from 'src/app/models/models';
-import { REGIONES_COMUNAS } from 'src/app/models/regiones-comunas'; // Importamos el archivo de regiones y comunas
+import { regionesComunas } from 'src/app/models/regiones-comunas';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +12,6 @@ import { REGIONES_COMUNAS } from 'src/app/models/regiones-comunas'; // Importamo
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
-  regionesComunas = REGIONES_COMUNAS;
   comunas: string[] = [];
 
   constructor(
@@ -24,34 +23,39 @@ export class RegisterPage implements OnInit {
   ) {
     this.registerForm = this.formBuilder.group({
       tipoUsuario: ['jugador', Validators.required],
-      nombre: ['', Validators.required],
-      apellidoPaterno: ['', Validators.required],
-      apellidoMaterno: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      rut: ['', Validators.required],
-      edad: ['', Validators.required],
-      region: ['', Validators.required],
+      rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
       comuna: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      posicion: ['', Validators.required],
+      nombre: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
+      apellidoPaterno: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
+      apellidoMaterno: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
+      email: ['', [Validators.required, Validators.email]],
+      edad: ['', [Validators.required, Validators.min(18)]],
+      posicion: [''],
       foto: [''],
-      buscandoEquipo: [false]
-    });
-
-    this.registerForm.get('region')?.valueChanges.subscribe((region) => {
-      this.onRegionChange(region);
+      password: ['', [Validators.minLength(8), Validators.maxLength(15), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)]],
+      buscandoEquipo: [false],
+      direccion: ['']
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.comunas = this.loadComunas();
+  }
 
-  onRegionChange(region: string) {
-    const regionObj = this.regionesComunas.find((reg) => reg.region === region);
-    this.comunas = regionObj ? regionObj.comunas : [];
-    this.registerForm.get('comuna')?.setValue('');
+  loadComunas(): string[] {
+    const comunasList: string[] = [];
+    regionesComunas.forEach(region => {
+      region.comunas.forEach(comuna => comunasList.push(comuna));
+    });
+    return comunasList;
   }
 
   async onSubmit() {
+    if (this.registerForm.invalid) {
+      this.showErrorAlert('Formulario inválido', 'Por favor, completa todos los campos correctamente.');
+      return;
+    }
+
     const loading = await this.loadingController.create({
       message: 'Registrando...',
     });
@@ -62,17 +66,17 @@ export class RegisterPage implements OnInit {
     const nuevoUsuario: Usuario = {
       id: this.almacenamientoService.generateId(),
       tipoUsuario: formValues.tipoUsuario,
-      nombre: formValues.nombre,
-      apellidoPaterno: formValues.apellidoPaterno,
-      apellidoMaterno: formValues.apellidoMaterno,
-      email: formValues.email,
       rut: formValues.rut,
-      edad: formValues.edad,
       comuna: formValues.comuna,
-      password: formValues.password,
-      posicion: formValues.posicion,
+      nombre: formValues.nombre || '',
+      apellidoPaterno: formValues.apellidoPaterno || '',
+      apellidoMaterno: formValues.apellidoMaterno || '',
+      email: formValues.email || '',
+      edad: formValues.edad || 0,
+      posicion: formValues.posicion || '',
       foto: formValues.foto || '',
-      buscandoEquipo: formValues.buscandoEquipo
+      password: formValues.password || '',
+      buscandoEquipo: formValues.buscandoEquipo || false
     };
 
     try {

@@ -1,24 +1,26 @@
 export interface Usuario {
   id: string;
-  nombre: string;
-  apellidoPaterno: string;
-  apellidoMaterno: string;
-  email: string;
+  nombre?: string;
+  apellidoPaterno?: string;
+  apellidoMaterno?: string;
+  email?: string;
   rut: string;
-  edad: number;
-  posicion: string;
+  edad?: number;
+  posicion?: string;
   comuna: string;
   foto?: string;
   password?: string;
   tipoUsuario: string;
-  buscandoEquipo: boolean;
+  buscandoEquipo?: boolean;
+  equipo?: string;
 }
+
 
 export interface Equipo {
   id: string;
   nombre: string;
   lugar?: string;
-  miembros: Usuario[];
+  miembros: string[];
 }
 
 export interface Reserva {
@@ -36,7 +38,7 @@ export interface Partido {
   fecha: string;
   hora: string;
   lugar: string;
-  cancha: Cancha;
+  cancha?: Cancha;
 }
 
 export interface Club {
@@ -54,4 +56,13 @@ export interface Cancha {
   nombre: string;
   tipo: string;
   bloqueada: boolean;
+}
+
+export interface Invitacion {
+  id: string;
+  equipoId: string;
+  jugadorId: string;
+  equipoNombre: string; // Añadir esta propiedad si no existe
+  mensaje: string;
+  estado: 'pendiente' | 'aceptada' | 'rechazada';
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { from, Observable } from 'rxjs';
-import { Usuario, Equipo, Reserva, Partido, Club, Cancha } from '../models/models';
+import { Usuario, Equipo, Reserva, Partido, Club, Cancha, Invitacion } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +19,11 @@ export class AlmacenamientoService {
   }
 
   async set(key: string, value: any): Promise<any> {
-    return this._storage?.set(key, value) ?? Promise.resolve();
+    return this._storage?.set(key, value);
   }
 
   async get<T>(key: string): Promise<T | null> {
-    return this._storage?.get(key) ?? Promise.resolve(null);
+    return this._storage?.get(key);
   }
 
   async clear(): Promise<void> {
@@ -36,7 +36,7 @@ export class AlmacenamientoService {
 
   // Métodos de Usuario
   setUsuarios(usuarios: Usuario[]): Promise<any> {
-    return this._storage?.set('usuarios', usuarios) ?? Promise.resolve();
+    return this._storage?.set('usuarios', usuarios) || Promise.resolve();
   }
 
   getUsuarios(): Observable<Usuario[]> {
@@ -44,35 +44,38 @@ export class AlmacenamientoService {
   }
 
   async addUsuario(usuario: Usuario): Promise<void> {
-    const usuarios = await this.get<Usuario[]>('usuarios') || [];
+    const usuarios = await this._storage?.get('usuarios') || [];
     usuarios.push(usuario);
-    await this.set('usuarios', usuarios);
+    await this._storage?.set('usuarios', usuarios);
   }
 
   async getUsuarioByEmail(email: string): Promise<Usuario | undefined> {
-    const usuarios = await this.get<Usuario[]>('usuarios') || [];
+    const usuarios = await this._storage?.get('usuarios') || [];
     return usuarios.find((user: Usuario) => user.email === email);
   }
 
-  async updateUsuario(updatedUsuario: Usuario): Promise<void> {
+  async getUsuarioById(id: string): Promise<Usuario | undefined> {
     const usuarios = await this.get<Usuario[]>('usuarios') || [];
+    return usuarios.find(usuario => usuario.id === id);
+  }
+  
+  async updateUsuario(updatedUsuario: Usuario): Promise<void> {
+    const usuarios = await this._storage?.get('usuarios') || [];
     const index = usuarios.findIndex((user: Usuario) => user.id === updatedUsuario.id);
     if (index > -1) {
       usuarios[index] = updatedUsuario;
-      await this.set('usuarios', usuarios);
+      await this._storage?.set('usuarios', usuarios);
     }
   }
 
   async deleteUsuario(id: string): Promise<void> {
-    let usuarios = await this.get<Usuario[]>('usuarios') || [];
+    let usuarios = await this._storage?.get('usuarios') || [];
     usuarios = usuarios.filter((user: Usuario) => user.id !== id);
-    await this.set('usuarios', usuarios);
+    await this._storage?.set('usuarios', usuarios);
   }
 
   async getCurrentUser(): Promise<Usuario> {
-    const user = await this.get<Usuario>('currentUser');
-    if (!user) throw new Error('No current user found');
-    return user;
+    return this._storage?.get('currentUser');
   }
 
   // Métodos de Equipo
@@ -88,6 +91,11 @@ export class AlmacenamientoService {
     const equipos = await this.get<Equipo[]>('equipos') || [];
     equipos.push(equipo);
     await this.set('equipos', equipos);
+  }
+
+  async getEquipoById(id: string): Promise<Equipo | undefined> {
+    const equipos = await this.get<Equipo[]>('equipos') || [];
+    return equipos.find(equipo => equipo.id === id);
   }
 
   async updateEquipo(updatedEquipo: Equipo): Promise<void> {
@@ -167,7 +175,7 @@ export class AlmacenamientoService {
 
   // Métodos de Club
   setClubs(clubs: Club[]): Promise<any> {
-    return this._storage?.set('clubs', clubs) ?? Promise.resolve();
+    return this._storage?.set('clubs', clubs) || Promise.resolve();
   }
 
   getClubs(): Observable<Club[]> {
@@ -175,29 +183,29 @@ export class AlmacenamientoService {
   }
 
   async addClub(club: Club): Promise<void> {
-    const clubs = await this.get<Club[]>('clubs') || [];
+    const clubs = await this._storage?.get('clubs') || [];
     clubs.push(club);
-    await this.set('clubs', clubs);
+    await this._storage?.set('clubs', clubs);
   }
 
   async getClubById(id: string): Promise<Club | undefined> {
-    const clubs = await this.get<Club[]>('clubs') || [];
+    const clubs = await this._storage?.get('clubs') || [];
     return clubs.find((club: Club) => club.id === id);
   }
 
   async updateClub(updatedClub: Club): Promise<void> {
-    const clubs = await this.get<Club[]>('clubs') || [];
+    const clubs = await this._storage?.get('clubs') || [];
     const index = clubs.findIndex((club: Club) => club.id === updatedClub.id);
     if (index > -1) {
       clubs[index] = updatedClub;
-      await this.set('clubs', clubs);
+      await this._storage?.set('clubs', clubs);
     }
   }
 
   async deleteClub(id: string): Promise<void> {
-    let clubs = await this.get<Club[]>('clubs') || [];
+    let clubs = await this._storage?.get('clubs') || [];
     clubs = clubs.filter((club: Club) => club.id !== id);
-    await this.set('clubs', clubs);
+    await this._storage?.set('clubs', clubs);
   }
 
   // Métodos de Cancha
@@ -217,5 +225,54 @@ export class AlmacenamientoService {
       clubs[clubIndex].canchas = clubs[clubIndex].canchas.filter(cancha => cancha.id !== canchaId);
       await this.set('clubs', clubs);
     }
+  }
+
+  // Métodos de Invitacion
+  getInvitaciones(): Observable<Invitacion[]> {
+    return from(this.get<Invitacion[]>('invitaciones').then(data => data || []));
+  }
+
+  async enviarInvitacion(jugador: Usuario, equipo: Equipo, mensaje: string): Promise<void> {
+    const nuevaInvitacion: Invitacion = {
+      id: this.generateId(),
+      equipoId: equipo.id,
+      jugadorId: jugador.id,
+      equipoNombre: equipo.nombre, // Añadir esta propiedad
+      mensaje,
+      estado: 'pendiente'
+    };
+
+    const invitaciones = await this.get<Invitacion[]>('invitaciones') || [];
+    invitaciones.push(nuevaInvitacion);
+    await this.set('invitaciones', invitaciones);
+  }
+
+  async updateInvitacion(updatedInvitacion: Invitacion): Promise<void> {
+    const invitaciones = await this.get<Invitacion[]>('invitaciones') || [];
+    const index = invitaciones.findIndex(i => i.id === updatedInvitacion.id);
+    if (index > -1) {
+      invitaciones[index] = updatedInvitacion;
+      await this.set('invitaciones', invitaciones);
+    }
+  }
+
+  async deleteInvitacion(id: string): Promise<void> {
+    let invitaciones = await this.get<Invitacion[]>('invitaciones') || [];
+    invitaciones = invitaciones.filter((i: Invitacion) => i.id !== id);
+    await this.set('invitaciones', invitaciones);
+  }
+
+  // Métodos de Reto
+  async enviarReto(equipo1: Equipo, equipo2: Equipo): Promise<void> {
+    const nuevoReto = {
+      id: this.generateId(),
+      equipo1Id: equipo1.id,
+      equipo2Id: equipo2.id,
+      estado: 'pendiente'
+    };
+
+    const retos = await this.get<any[]>('retos') || [];
+    retos.push(nuevoReto);
+    await this.set('retos', retos);
   }
 }

@@ -18,6 +18,7 @@ export class HomePage implements OnInit {
   isLoading = true;
   isClub = false;
   maxJugadoresMostrar = 5;
+  currentUser: Usuario | null = null;
 
   constructor(
     private almacenamientoService: AlmacenamientoService,
@@ -39,12 +40,12 @@ export class HomePage implements OnInit {
     await loading.present();
 
     try {
-      const currentUser = await this.almacenamientoService.getCurrentUser();
-      if (currentUser && currentUser.tipoUsuario) {
-        this.isClub = currentUser.tipoUsuario === 'club';
+      this.currentUser = await this.almacenamientoService.getCurrentUser();
+      if (this.currentUser && this.currentUser.tipoUsuario) {
+        this.isClub = this.currentUser.tipoUsuario === 'club';
 
         if (this.isClub) {
-          const club = await this.almacenamientoService.getClubById(currentUser.id);
+          const club = await this.almacenamientoService.getClubById(this.currentUser.id);
           if (club) {
             this.clubCanchas = club.canchas;
           }
@@ -91,11 +92,45 @@ export class HomePage implements OnInit {
     this.navCtrl.navigateForward('/jugadores-buscando-equipo');
   }
 
+  verMasEquipos() {
+    this.navCtrl.navigateForward('/equipos-buscando-contrincante');
+  }
+
   trackById(index: number, item: any): number {
     return item.id;
   }
 
   private async showErrorAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  async invitarJugador(jugador: Usuario) {
+    if (this.currentUser && this.currentUser.equipo) {
+      const equipo = await this.almacenamientoService.getEquipoById(this.currentUser.equipo);
+      if (equipo) {
+        const mensaje = 'Te invitamos a unirte a nuestro equipo'; // O cualquier otro mensaje por defecto
+        await this.almacenamientoService.enviarInvitacion(jugador, equipo, mensaje);
+        this.showSuccessAlert('Invitación Enviada', 'La invitación ha sido enviada al jugador.');
+      }
+    }
+  }
+
+  async retarEquipo(equipo: Equipo) {
+    if (this.currentUser && this.currentUser.equipo) {
+      const equipoActual = await this.almacenamientoService.getEquipoById(this.currentUser.equipo);
+      if (equipoActual) {
+        await this.almacenamientoService.enviarReto(equipoActual, equipo);
+        this.showSuccessAlert('Reto Enviado', 'El reto ha sido enviado al equipo.');
+      }
+    }
+  }
+
+  private async showSuccessAlert(header: string, message: string) {
     const alert = await this.alertController.create({
       header,
       message,

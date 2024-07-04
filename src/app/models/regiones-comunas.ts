@@ -1,4 +1,4 @@
-export const REGIONES_COMUNAS = [
+export const regionesComunas = [
     {
       region: 'Región de Arica y Parinacota',
       comunas: ['Arica', 'Camarones', 'Putre', 'General Lagos']

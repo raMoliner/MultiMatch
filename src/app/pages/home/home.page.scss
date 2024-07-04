@@ -25,3 +25,36 @@
 #container a {
   text-decoration: none;
 }
+
+ion-content {
+  --ion-padding-start: 16px;
+  --ion-padding-end: 16px;
+}
+
+h2 {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+ion-button {
+  margin: 0 5px;
+}
+
+.jugador-destacado {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+

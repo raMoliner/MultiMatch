@@ -40,8 +40,8 @@ export class AppComponent implements OnInit {
 
   async checkLoginStatus() {
     const loggedIn = await this.almacenamientoService.get('isLoggedIn');
-    this.isLoggedIn = !!loggedIn; 
-    this.cd.detectChanges(); 
+    this.isLoggedIn = !!loggedIn;
+    this.cd.detectChanges();
   }
 
   async logout() {
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
     await this.almacenamientoService.set('currentUser', null);
     this.isLoggedIn = false;
     this.router.navigateByUrl('/login');
-    this.cd.detectChanges(); // 
+    this.cd.detectChanges();
   }
 
   navigateToHome() {

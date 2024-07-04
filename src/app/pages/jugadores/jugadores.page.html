@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Jugadores</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm"></ion-searchbar>
+  <ion-list>
+    <ion-item *ngFor="let jugador of jugadoresFiltrados">
+      {{ jugador.nombre }} {{ jugador.apellidoPaterno }}
+      <ion-button (click)="invitarJugador(jugador)">Invitar</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

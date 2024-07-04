@@ -24,6 +24,22 @@ const routes: Routes = [
   {
     path: 'solicitar-partido',
     loadChildren: () => import('./pages/solicitar-partido/solicitar-partido.module').then( m => m.SolicitarPartidoPageModule)
+  },
+  {
+    path: 'jugadores',
+    loadChildren: () => import('./pages/jugadores/jugadores.module').then( m => m.JugadoresPageModule)
+  },
+  {
+    path: 'buzon',
+    loadChildren: () => import('./pages/buzon/buzon.module').then( m => m.BuzonPageModule)
+  },
+  {
+    path: 'invitar-jugador',
+    loadChildren: () => import('./pages/invitar-jugador/invitar-jugador.module').then( m => m.InvitarJugadorPageModule)
+  },
+  {
+    path: 'invitaciones',
+    loadChildren: () => import('./pages/invitaciones/invitaciones.module').then( m => m.InvitacionesPageModule)
   }
 ];
 

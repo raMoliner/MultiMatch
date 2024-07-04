@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Invitaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let invitacion of invitaciones">
+      <ion-label>
+        <h2>Equipo: {{ invitacion.equipoNombre }}</h2>
+        <p>{{ invitacion.mensaje }}</p>
+        <ion-button *ngIf="invitacion.estado === 'pendiente'" (click)="responderInvitacion(invitacion, 'aceptada')">Aceptar</ion-button>
+        <ion-button *ngIf="invitacion.estado === 'pendiente'" (click)="responderInvitacion(invitacion, 'rechazada')">Rechazar</ion-button>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
