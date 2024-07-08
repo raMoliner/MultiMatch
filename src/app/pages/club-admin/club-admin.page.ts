@@ -13,6 +13,7 @@ export class ClubAdminPage implements OnInit {
   club: Club = { id: '', nombre: '', rut: '', direccion: '', comuna: '', canchas: [] };
   nombreCancha: string = '';
   tipoCancha: string = '';
+  tamañoCancha: number = 5; // Asegúrate de inicializar tamañoCancha
   canchas: Cancha[] = [];
 
   constructor(
@@ -36,10 +37,11 @@ export class ClubAdminPage implements OnInit {
   async addCancha() {
     const nuevaCancha: Cancha = {
       id: this.almacenamientoService.generateId(),
-      clubId: this.clubId,
+      clubId: this.club.id, // Cambiado de this.currentClub.id a this.club.id
       nombre: this.nombreCancha,
       tipo: this.tipoCancha,
-      bloqueada: false
+      bloqueada: false,
+      tamaño: this.tamañoCancha
     };
     await this.almacenamientoService.addCanchaToClub(this.clubId, nuevaCancha);
     this.loadClub();

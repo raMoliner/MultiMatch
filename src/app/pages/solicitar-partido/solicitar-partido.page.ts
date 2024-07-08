@@ -10,12 +10,13 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./solicitar-partido.page.scss'],
 })
 export class SolicitarPartidoPage implements OnInit {
-  equipoId: string;
+  equipoId: string = '';
   fecha: string = '';
   hora: string = '';
   canchaSeleccionada: string = '';
-  equipo: Equipo = { id: '', nombre: '', miembros: [] };
+  equipo: Equipo = { id: '', nombre: '', miembros: [], tamaño: 5 };
   canchasSugeridas: Cancha[] = [];
+  lugar: string = ''; // Define 'lugar' property to fix the error
 
   constructor(
     private route: ActivatedRoute,
@@ -32,7 +33,7 @@ export class SolicitarPartidoPage implements OnInit {
 
   async loadEquipo() {
     const equipos = await this.almacenamientoService.get<Equipo[]>('equipos');
-    this.equipo = (equipos || []).find(e => e.id === this.equipoId) || { id: '', nombre: '', miembros: [] };
+    this.equipo = (equipos || []).find(e => e.id === this.equipoId) || { id: '', nombre: '', miembros: [], tamaño: 5 };
   }
 
   async loadCanchasSugeridas() {
@@ -41,11 +42,11 @@ export class SolicitarPartidoPage implements OnInit {
   }
 
   async solicitarPartido() {
-    const nuevaCancha = this.canchasSugeridas.find(c => c.id === this.canchaSeleccionada) || { id: '', clubId: '', nombre: '', tipo: '', bloqueada: false };
+    const nuevaCancha = this.canchasSugeridas.find(c => c.id === this.canchaSeleccionada) || { id: '', clubId: '', nombre: '', tipo: '', bloqueada: false, tamaño: 5 };
     const nuevoPartido: Partido = {
       id: this.almacenamientoService.generateId(),
       equipo1: this.equipo,
-      equipo2: { id: '', nombre: '', miembros: [] },
+      equipo2: { id: '', nombre: '', miembros: [], tamaño: nuevaCancha.tamaño },
       fecha: this.fecha,
       hora: this.hora,
       lugar: nuevaCancha.nombre,

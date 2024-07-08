@@ -17,6 +17,22 @@
               <ion-icon name="person" slot="start" src="assets/ionicons/person-outline.svg"></ion-icon>
               <ion-label>Perfil</ion-label>
             </ion-item>
+            <ion-item *ngIf="isClubUser" routerLink="/club-admin" routerDirection="root">
+              <ion-icon name="build" slot="start" src="assets/ionicons/football"></ion-icon>
+              <ion-label>Club Admin</ion-label>
+            </ion-item>
+            <ion-item *ngIf="isPlayerUser" routerLink="/jugador-admin" routerDirection="root">
+              <ion-icon name="football" slot="start" src="assets/ionicons/football.svg"></ion-icon>
+              <ion-label>Jugador Admin</ion-label>
+            </ion-item>
+            <ion-item routerLink="/buzon" routerDirection="root">
+              <ion-icon name="mail" slot="start" src="assets/ionicons/chatbox-ellipses.svg"></ion-icon>
+              <ion-label>Buzón</ion-label>
+            </ion-item>
+            <ion-item routerLink="/equipos" routerDirection="root">
+              <ion-icon name="people" slot="start" src="assets/ionicons/archive.svg"></ion-icon>
+              <ion-label>Equipos</ion-label>
+            </ion-item>
             <ion-item (click)="logout()">
               <ion-icon name="log-out" slot="start" src="assets/ionicons/log-out-outline.svg"></ion-icon>
               <ion-label>Cerrar Sesión</ion-label>

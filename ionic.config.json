@@ -1,4 +1,7 @@
 {
   "name": "multi-match",
-  "type": "angular"
+  "type": "angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

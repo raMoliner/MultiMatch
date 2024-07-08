@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
-import { Usuario, Equipo } from 'src/app/models/models';
+import { Equipo, Usuario } from 'src/app/models/models';
 
 @Component({
   selector: 'app-jugador-admin',
@@ -8,11 +8,14 @@ import { Usuario, Equipo } from 'src/app/models/models';
   styleUrls: ['./jugador-admin.page.scss'],
 })
 export class JugadorAdminPage implements OnInit {
+  equipoId: string;
   equipo: Equipo | null = null;
+  miembroId: string = '';
   miembros: Usuario[] = [];
-  emailMiembro: string = '';
 
-  constructor(private almacenamientoService: AlmacenamientoService) {}
+  constructor(private almacenamientoService: AlmacenamientoService) {
+    this.equipoId = '1'; // Define un valor predeterminado o obténlo de la ruta
+  }
 
   ngOnInit() {
     this.loadEquipo();
@@ -20,35 +23,20 @@ export class JugadorAdminPage implements OnInit {
 
   async loadEquipo() {
     const equipos = await this.almacenamientoService.getEquipos().toPromise();
-    // Supongamos que el equipo actual está guardado en algún lugar, como en el almacenamiento local
-    this.equipo = equipos ? equipos.find(e => e.id === 'id-del-equipo-actual') || null : null;
+    this.equipo = equipos ? equipos.find(e => e.id === this.equipoId) || null : null;
     if (this.equipo) {
-      this.miembros = [];
-      for (const miembroId of this.equipo.miembros) {
-        const miembro = await this.almacenamientoService.getUsuarioById(miembroId);
-        if (miembro) {
-          this.miembros.push(miembro);
-        }
+      this.miembros = await this.almacenamientoService.getUsuariosByIds(this.equipo.miembros);
+    }
+  }
+
+  async agregarMiembro(miembroId: string) {
+    if (this.equipo) {
+      const miembro = await this.almacenamientoService.getUsuarioById(miembroId);
+      if (miembro) {
+        this.equipo.miembros.push(miembro.id);
+        await this.almacenamientoService.updateEquipo(this.equipo);
+        this.loadEquipo();
       }
     }
   }
-
-  async agregarMiembro() {
-    const usuarios = await this.almacenamientoService.getUsuarios().toPromise();
-    const nuevoMiembro = usuarios ? usuarios.find(u => u.email === this.emailMiembro) : null;
-    if (nuevoMiembro && this.equipo) {
-      this.equipo.miembros.push(nuevoMiembro.id);
-      await this.almacenamientoService.updateEquipo(this.equipo);
-      this.loadEquipo();
-    }
-  }
-
-  async eliminarMiembro(miembroId: string) {
-    if (this.equipo) {
-      this.equipo.miembros = this.equipo.miembros.filter(m => m !== miembroId);
-      await this.almacenamientoService.updateEquipo(this.equipo);
-      this.loadEquipo();
-    }
-  }
 }
-

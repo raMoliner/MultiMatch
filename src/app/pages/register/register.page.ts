@@ -4,6 +4,7 @@ import { NavController, AlertController, LoadingController } from '@ionic/angula
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 import { Usuario } from 'src/app/models/models';
 import { regionesComunas } from 'src/app/models/regiones-comunas';
+import { CameraService } from 'src/app/servicios/camera.service';
 
 @Component({
   selector: 'app-register',
@@ -12,6 +13,7 @@ import { regionesComunas } from 'src/app/models/regiones-comunas';
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
+  regiones: string[] = [];
   comunas: string[] = [];
 
   constructor(
@@ -19,11 +21,13 @@ export class RegisterPage implements OnInit {
     private navCtrl: NavController,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private almacenamientoService: AlmacenamientoService
+    private almacenamientoService: AlmacenamientoService,
+    private cameraService: CameraService
   ) {
     this.registerForm = this.formBuilder.group({
       tipoUsuario: ['jugador', Validators.required],
       rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
+      region: ['', Validators.required],
       comuna: ['', Validators.required],
       nombre: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
       apellidoPaterno: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
@@ -33,21 +37,25 @@ export class RegisterPage implements OnInit {
       posicion: [''],
       foto: [''],
       password: ['', [Validators.minLength(8), Validators.maxLength(15), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)]],
+      confirmPassword: ['', Validators.required],
       buscandoEquipo: [false],
       direccion: ['']
-    });
+    }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit() {
-    this.comunas = this.loadComunas();
+    this.regiones = this.loadRegiones();
   }
 
-  loadComunas(): string[] {
-    const comunasList: string[] = [];
-    regionesComunas.forEach(region => {
-      region.comunas.forEach(comuna => comunasList.push(comuna));
-    });
-    return comunasList;
+  loadRegiones(): string[] {
+    return regionesComunas.map(region => region.region);
+  }
+
+  onRegionChange() {
+    const regionSeleccionada = this.registerForm.get('region')?.value;
+    const region = regionesComunas.find(r => r.region === regionSeleccionada);
+    this.comunas = region ? region.comunas : [];
+    this.registerForm.patchValue({ comuna: '' });
   }
 
   async onSubmit() {
@@ -90,6 +98,24 @@ export class RegisterPage implements OnInit {
     }
   }
 
+  async takePhoto() {
+    try {
+      const photo = await this.cameraService.takePicture();
+      this.registerForm.patchValue({ foto: photo });
+    } catch (error) {
+      this.showErrorAlert('Error', (error as Error).message);
+    }
+  }
+
+  async selectPhoto() {
+    try {
+      const photo = await this.cameraService.takePicture(); // Se usa el mismo método para seleccionar foto de la galería
+      this.registerForm.patchValue({ foto: photo });
+    } catch (error) {
+      this.showErrorAlert('Error', (error as Error).message);
+    }
+  }
+
   private async showErrorAlert(header: string, message: string) {
     const alert = await this.alertController.create({
       header,
@@ -97,5 +123,15 @@ export class RegisterPage implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+  }
+
+  private passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    if (password?.value !== confirmPassword?.value) {
+      confirmPassword?.setErrors({ mismatch: true });
+    } else {
+      confirmPassword?.setErrors(null);
+    }
   }
 }

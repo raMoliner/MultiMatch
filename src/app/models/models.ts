@@ -15,12 +15,12 @@ export interface Usuario {
   equipo?: string;
 }
 
-
 export interface Equipo {
   id: string;
   nombre: string;
   lugar?: string;
   miembros: string[];
+  tamaño: number; // 5, 7, o 11 jugadores
 }
 
 export interface Reserva {
@@ -56,13 +56,14 @@ export interface Cancha {
   nombre: string;
   tipo: string;
   bloqueada: boolean;
+  tamaño: number; // 5, 7, o 11 jugadores
 }
 
 export interface Invitacion {
   id: string;
   equipoId: string;
   jugadorId: string;
-  equipoNombre: string; // Añadir esta propiedad si no existe
+  equipoNombre: string;
   mensaje: string;
   estado: 'pendiente' | 'aceptada' | 'rechazada';
 }

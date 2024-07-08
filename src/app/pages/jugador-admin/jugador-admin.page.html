@@ -5,15 +5,9 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngFor="let miembro of miembros">
-    <ion-card-header>
-      <ion-card-title>{{ miembro.nombre }} {{ miembro.apellidoPaterno }}</ion-card-title>
-      <ion-button (click)="eliminarMiembro(miembro.id)">Eliminar</ion-button>
-    </ion-card-header>
-  </ion-card>
   <ion-item>
-    <ion-label position="floating">Email del Miembro</ion-label>
-    <ion-input [(ngModel)]="emailMiembro" type="email"></ion-input>
+    <ion-label>Miembro ID</ion-label>
+    <ion-input [(ngModel)]="miembroId"></ion-input>
   </ion-item>
-  <ion-button (click)="agregarMiembro()">Agregar Miembro</ion-button>
+  <ion-button (click)="agregarMiembro(miembroId)">Agregar Miembro</ion-button>
 </ion-content>

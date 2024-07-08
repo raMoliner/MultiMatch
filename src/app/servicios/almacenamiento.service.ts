@@ -58,6 +58,11 @@ export class AlmacenamientoService {
     const usuarios = await this.get<Usuario[]>('usuarios') || [];
     return usuarios.find(usuario => usuario.id === id);
   }
+
+  async getUsuariosByIds(ids: string[]): Promise<Usuario[]> {
+    const usuarios = await this.get<Usuario[]>('usuarios') || [];
+    return usuarios.filter(usuario => ids.includes(usuario.id));
+  }  
   
   async updateUsuario(updatedUsuario: Usuario): Promise<void> {
     const usuarios = await this._storage?.get('usuarios') || [];

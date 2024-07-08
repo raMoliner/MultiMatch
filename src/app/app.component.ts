@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { AlmacenamientoService } from './servicios/almacenamiento.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { loadTestData } from './servicios/test-data.service';
+import { Usuario } from './models/models';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +14,12 @@ import { ChangeDetectorRef } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   isLoggedIn = false;
+  isClubUser = false;
+  isPlayerUser = false;
 
   constructor(
     private router: Router,
     private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
     private almacenamientoService: AlmacenamientoService,
     private cd: ChangeDetectorRef
   ) {
@@ -25,12 +27,12 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-      this.almacenamientoService.init().then(() => {
-        this.checkLoginStatus();
-      });
+    this.platform.ready().then(async () => {
+      await StatusBar.setStyle({ style: Style.Default });
+      await SplashScreen.hide();
+      await this.almacenamientoService.init();
+      await this.checkLoginStatus();
+      await loadTestData(this.almacenamientoService);
     });
   }
 
@@ -41,6 +43,15 @@ export class AppComponent implements OnInit {
   async checkLoginStatus() {
     const loggedIn = await this.almacenamientoService.get('isLoggedIn');
     this.isLoggedIn = !!loggedIn;
+
+    if (this.isLoggedIn) {
+      const currentUser = await this.almacenamientoService.get('currentUser');
+      if (currentUser && typeof currentUser === 'object' && 'tipoUsuario' in currentUser) {
+        this.isClubUser = currentUser.tipoUsuario === 'club';
+        this.isPlayerUser = currentUser.tipoUsuario === 'jugador';
+      }
+    }
+
     this.cd.detectChanges();
   }
 

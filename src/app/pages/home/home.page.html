@@ -30,7 +30,11 @@
     <h2>Jugadores Buscando Equipo</h2>
     <ion-list>
       <ion-item *ngFor="let jugador of jugadoresSinEquipo" class="list-item">
-        <ion-label>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</ion-label>
+        <ion-label>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}
+          <p>Posición: {{ jugador.posicion }}</p>
+          <p>Edad: {{ jugador.edad }}</p>
+        </ion-label>
+
         <ion-button size="small" (click)="invitarJugador(jugador)">Invitar</ion-button>
       </ion-item>
     </ion-list>
