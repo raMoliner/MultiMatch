@@ -19,7 +19,7 @@ export class LoginPage implements OnInit {
     private almacenamientoService: AlmacenamientoService,
     private alertController: AlertController,
     private navCtrl: NavController,
-    private cd: ChangeDetectorRef // Inject ChangeDetectorRef
+    private cd: ChangeDetectorRef
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -38,7 +38,7 @@ export class LoginPage implements OnInit {
           await this.almacenamientoService.set('isLoggedIn', true);
           await this.almacenamientoService.set('currentUser', usuario);
           this.navCtrl.navigateRoot('/home');
-          this.cd.detectChanges(); // Ensure change detection is run
+          this.cd.detectChanges();
         } else {
           const alert = await this.alertController.create({
             header: 'Error',

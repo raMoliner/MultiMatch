@@ -9,43 +9,66 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./invitaciones.page.scss'],
 })
 export class InvitacionesPage implements OnInit {
-  currentUser: Usuario = {} as Usuario;
+  currentUser: Usuario | null = null;
   invitaciones: Invitacion[] = [];
 
-  constructor(private almacenamientoService: AlmacenamientoService, private alertController: AlertController) {}
+  constructor(
+    private almacenamientoService: AlmacenamientoService,
+    private alertController: AlertController
+  ) {}
 
   async ngOnInit() {
     this.currentUser = await this.almacenamientoService.getCurrentUser();
-    this.almacenamientoService.getInvitaciones().subscribe((todasInvitaciones: Invitacion[]) => {
-      this.invitaciones = todasInvitaciones.filter((i: Invitacion) => i.jugadorId === this.currentUser?.id);
-    });
+    if (this.currentUser) {
+      this.almacenamientoService
+        .getInvitaciones()
+        .subscribe((todasInvitaciones: Invitacion[]) => {
+          this.invitaciones = todasInvitaciones.filter(
+            (i: Invitacion) => i.jugadorId === this.currentUser?.id
+          );
+        });
+    } else {
+     
+      console.error('No se encontro al usuario.');
+      
+    }
   }
 
   async mostrarAlert(mensaje: string) {
     const alert = await this.alertController.create({
       header: 'Invitación',
       message: mensaje,
-      buttons: ['OK']
+      buttons: ['OK'],
     });
 
     await alert.present();
   }
 
-  async responderInvitacion(invitacion: Invitacion, estado: 'pendiente' | 'aceptada' | 'rechazada') {
+  async responderInvitacion(
+    invitacion: Invitacion,
+    estado: 'pendiente' | 'aceptada' | 'rechazada'
+  ) {
+    if (!this.currentUser) {
+      console.error('No current user to respond to invitation.');
+      return;
+    }
+
     invitacion.estado = estado;
     await this.almacenamientoService.updateInvitacion(invitacion);
-  
+
     if (estado === 'aceptada') {
-      const equipo = await this.almacenamientoService.getEquipoById(invitacion.equipoId);
+      const equipo = await this.almacenamientoService.getEquipoById(
+        invitacion.equipoId
+      );
       if (equipo) {
-        equipo.miembros.push(this.currentUser.id.toString()); // Asegurándonos de que la ID del usuario es un string
+        equipo.miembros.push(this.currentUser.id.toString()); 
         await this.almacenamientoService.updateEquipo(equipo);
         this.mostrarAlert('Has sido añadido al equipo');
       }
     } else {
       this.mostrarAlert('Has rechazado la invitación');
     }
-  
-    this.ngOnInit(); // Refresh the list of invitations
+
+    this.ngOnInit(); 
   }
 }

@@ -19,11 +19,11 @@ export class AlmacenamientoService {
   }
 
   async set(key: string, value: any): Promise<any> {
-    return this._storage?.set(key, value);
+    return this._storage?.set(key, value) ?? Promise.resolve();
   }
 
   async get<T>(key: string): Promise<T | null> {
-    return this._storage?.get(key);
+    return this._storage?.get(key) ?? Promise.resolve(null);
   }
 
   async clear(): Promise<void> {
@@ -36,21 +36,21 @@ export class AlmacenamientoService {
 
   // Métodos de Usuario
   setUsuarios(usuarios: Usuario[]): Promise<any> {
-    return this._storage?.set('usuarios', usuarios) || Promise.resolve();
+    return this.set('usuarios', usuarios);
   }
 
   getUsuarios(): Observable<Usuario[]> {
-    return from(this._storage?.get('usuarios') || Promise.resolve([]));
+    return from(this.get<Usuario[]>('usuarios').then(data => data || []));
   }
 
   async addUsuario(usuario: Usuario): Promise<void> {
-    const usuarios = await this._storage?.get('usuarios') || [];
+    const usuarios = await this.get<Usuario[]>('usuarios') || [];
     usuarios.push(usuario);
-    await this._storage?.set('usuarios', usuarios);
+    await this.set('usuarios', usuarios);
   }
 
   async getUsuarioByEmail(email: string): Promise<Usuario | undefined> {
-    const usuarios = await this._storage?.get('usuarios') || [];
+    const usuarios = await this.get<Usuario[]>('usuarios') || [];
     return usuarios.find((user: Usuario) => user.email === email);
   }
 
@@ -62,25 +62,25 @@ export class AlmacenamientoService {
   async getUsuariosByIds(ids: string[]): Promise<Usuario[]> {
     const usuarios = await this.get<Usuario[]>('usuarios') || [];
     return usuarios.filter(usuario => ids.includes(usuario.id));
-  }  
-  
+  }
+
   async updateUsuario(updatedUsuario: Usuario): Promise<void> {
-    const usuarios = await this._storage?.get('usuarios') || [];
+    const usuarios = await this.get<Usuario[]>('usuarios') || [];
     const index = usuarios.findIndex((user: Usuario) => user.id === updatedUsuario.id);
     if (index > -1) {
       usuarios[index] = updatedUsuario;
-      await this._storage?.set('usuarios', usuarios);
+      await this.set('usuarios', usuarios);
     }
   }
 
   async deleteUsuario(id: string): Promise<void> {
-    let usuarios = await this._storage?.get('usuarios') || [];
+    let usuarios = await this.get<Usuario[]>('usuarios') || [];
     usuarios = usuarios.filter((user: Usuario) => user.id !== id);
-    await this._storage?.set('usuarios', usuarios);
+    await this.set('usuarios', usuarios);
   }
 
-  async getCurrentUser(): Promise<Usuario> {
-    return this._storage?.get('currentUser');
+  async getCurrentUser(): Promise<Usuario | null> {
+    return this.get<Usuario>('currentUser');
   }
 
   // Métodos de Equipo
@@ -180,37 +180,37 @@ export class AlmacenamientoService {
 
   // Métodos de Club
   setClubs(clubs: Club[]): Promise<any> {
-    return this._storage?.set('clubs', clubs) || Promise.resolve();
+    return this.set('clubs', clubs);
   }
 
   getClubs(): Observable<Club[]> {
-    return from(this._storage?.get('clubs') || Promise.resolve([]));
+    return from(this.get<Club[]>('clubs').then(data => data || []));
   }
 
   async addClub(club: Club): Promise<void> {
-    const clubs = await this._storage?.get('clubs') || [];
+    const clubs = await this.get<Club[]>('clubs') || [];
     clubs.push(club);
-    await this._storage?.set('clubs', clubs);
+    await this.set('clubs', clubs);
   }
 
   async getClubById(id: string): Promise<Club | undefined> {
-    const clubs = await this._storage?.get('clubs') || [];
+    const clubs = await this.get<Club[]>('clubs') || [];
     return clubs.find((club: Club) => club.id === id);
   }
 
   async updateClub(updatedClub: Club): Promise<void> {
-    const clubs = await this._storage?.get('clubs') || [];
+    const clubs = await this.get<Club[]>('clubs') || [];
     const index = clubs.findIndex((club: Club) => club.id === updatedClub.id);
     if (index > -1) {
       clubs[index] = updatedClub;
-      await this._storage?.set('clubs', clubs);
+      await this.set('clubs', clubs);
     }
   }
 
   async deleteClub(id: string): Promise<void> {
-    let clubs = await this._storage?.get('clubs') || [];
+    let clubs = await this.get<Club[]>('clubs') || [];
     clubs = clubs.filter((club: Club) => club.id !== id);
-    await this._storage?.set('clubs', clubs);
+    await this.set('clubs', clubs);
   }
 
   // Métodos de Cancha

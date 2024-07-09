@@ -6,7 +6,6 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { AlmacenamientoService } from './servicios/almacenamiento.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { loadTestData } from './servicios/test-data.service';
-import { Usuario } from './models/models';
 
 @Component({
   selector: 'app-root',
@@ -26,14 +25,15 @@ export class AppComponent implements OnInit {
     this.initializeApp();
   }
 
-  initializeApp() {
-    this.platform.ready().then(async () => {
+  async initializeApp() {
+    await this.platform.ready();
+    if (this.platform.is('capacitor')) {
       await StatusBar.setStyle({ style: Style.Default });
       await SplashScreen.hide();
-      await this.almacenamientoService.init();
-      await this.checkLoginStatus();
-      await loadTestData(this.almacenamientoService);
-    });
+    }
+    await this.almacenamientoService.init();
+    await this.checkLoginStatus();
+    await loadTestData(this.almacenamientoService);  // Load test data
   }
 
   async ngOnInit() {
