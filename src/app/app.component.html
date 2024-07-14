@@ -18,13 +18,17 @@
                 <ion-icon name="person" slot="start" src="assets/ionicons/person-outline.svg"></ion-icon>
                 <ion-label>Perfil</ion-label>
               </ion-item>
-              <ion-item *ngIf="isClubUser" routerLink="/club-admin" routerDirection="root">
-                <ion-icon name="business" slot="start" src="assets/ionicons/business-outline.svg"></ion-icon>
-                <ion-label>Club Admin</ion-label>
+              <ion-item routerLink="/admin" routerDirection="root">
+                <ion-icon name="settings" slot="start" src="assets/ionicons/settings-outline.svg"></ion-icon>
+                <ion-label>Admin</ion-label>
               </ion-item>
-              <ion-item *ngIf="isPlayerUser" routerLink="/jugador-admin" routerDirection="root">
-                <ion-icon name="football" slot="start" src="assets/ionicons/football-outline.svg"></ion-icon>
-                <ion-label>Jugador Admin</ion-label>
+              <ion-item routerLink="/jugadores" routerDirection="root">
+                <ion-icon name="people" slot="start" src="assets/ionicons/people-outline.svg"></ion-icon>
+                <ion-label>Jugadores</ion-label>
+              </ion-item>
+              <ion-item routerLink="/invitaciones" routerDirection="root">
+                <ion-icon name="mail" slot="start" src="assets/ionicons/mail-outline.svg"></ion-icon>
+                <ion-label>Invitaciones</ion-label>
               </ion-item>
               <ion-item (click)="logout()">
                 <ion-icon name="log-out" slot="start" src="assets/ionicons/log-out-outline.svg"></ion-icon>

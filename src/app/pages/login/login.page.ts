@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UsuariosService } from 'src/app/servicios/usuarios.service';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { ChangeDetectorRef } from '@angular/core';
@@ -15,7 +14,6 @@ export class LoginPage implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private usuariosService: UsuariosService,
     private almacenamientoService: AlmacenamientoService,
     private alertController: AlertController,
     private navCtrl: NavController,
@@ -27,16 +25,18 @@ export class LoginPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   async onLogin() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
       try {
-        const usuario = await this.usuariosService.getUsuarioByEmail(email);
+        const usuario = await this.almacenamientoService.getUsuarioByEmail(email);
+        console.log('Login attempt for:', email, 'Found user:', usuario);
         if (usuario && usuario.password === password) {
           await this.almacenamientoService.set('isLoggedIn', true);
           await this.almacenamientoService.set('currentUser', usuario);
+          console.log('User logged in and set as current user:', usuario);
           this.navCtrl.navigateRoot('/home');
           this.cd.detectChanges();
         } else {
@@ -59,6 +59,7 @@ export class LoginPage implements OnInit {
   }
 
   irARegistro() {
+    console.log("Navigating to /register");
     this.navCtrl.navigateForward('/register');
   }
 }

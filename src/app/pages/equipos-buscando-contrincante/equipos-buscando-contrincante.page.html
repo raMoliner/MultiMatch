@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Equipos Buscando Contrincante</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let equipo of equiposBuscandoContrincante">
+      <ion-label>{{ equipo.nombre }}</ion-label>
+      <ion-button size="small" (click)="retarEquipo(equipo)">Retar</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

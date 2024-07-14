@@ -6,130 +6,129 @@
 
 <ion-content>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <ion-item>
-      <ion-label>Tipo de Usuario</ion-label>
-      <ion-select formControlName="tipoUsuario">
-        <ion-select-option value="jugador">Jugador</ion-select-option>
-        <ion-select-option value="club">Club</ion-select-option>
-      </ion-select>
-    </ion-item>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Crear una cuenta</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
 
-    <ion-item>
-      <ion-label position="floating">RUT</ion-label>
-      <ion-input formControlName="rut"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid">
-      RUT inválido. Formato requerido: xx.xxx.xxx-x
-    </ion-text>
+        <ion-item>
+          <ion-label>Tipo de Usuario</ion-label>
+          <ion-select formControlName="tipoUsuario" (ionChange)="onTipoUsuarioChange()">
+            <ion-select-option value="jugador">Jugador</ion-select-option>
+            <ion-select-option value="club">Club</ion-select-option>
+          </ion-select>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Región</ion-label>
-      <ion-select formControlName="region" (ionChange)="onRegionChange()">
-        <ion-select-option *ngFor="let region of regiones" [value]="region">{{ region }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <ion-item>
+          <ion-label position="floating">RUT</ion-label>
+          <ion-input formControlName="rut"></ion-input>
+          <ion-note *ngIf="registerForm.get('rut')?.invalid && registerForm.get('rut')?.touched" color="danger">
+            RUT inválido
+          </ion-note>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Comuna</ion-label>
-      <ion-select formControlName="comuna">
-        <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <ion-item>
+          <ion-label>Región</ion-label>
+          <ion-select formControlName="region" (ionChange)="onRegionChange()">
+            <ion-select-option *ngFor="let region of regiones" [value]="region">{{ region }}</ion-select-option>
+          </ion-select>
+        </ion-item>
 
-    <!-- Campos específicos para jugadores -->
-    <div *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
-      <ion-item>
-        <ion-label position="floating">Nombre</ion-label>
-        <ion-input formControlName="nombre"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid">
-        Nombre inválido. Mínimo 3 caracteres, máximo 15. Solo letras.
-      </ion-text>
+        <ion-item>
+          <ion-label>Comuna</ion-label>
+          <ion-select formControlName="comuna">
+            <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</ion-select-option>
+          </ion-select>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Apellido Paterno</ion-label>
-        <ion-input formControlName="apellidoPaterno"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('apellidoPaterno')?.touched && registerForm.get('apellidoPaterno')?.invalid">
-        Apellido inválido. Mínimo 3 caracteres, máximo 15. Solo letras.
-      </ion-text>
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input formControlName="nombre"></ion-input>
+          <ion-note *ngIf="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched" color="danger">
+            Nombre inválido
+          </ion-note>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Apellido Materno</ion-label>
-        <ion-input formControlName="apellidoMaterno"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('apellidoMaterno')?.touched && registerForm.get('apellidoMaterno')?.invalid">
-        Apellido inválido. Mínimo 3 caracteres, máximo 15. Solo letras.
-      </ion-text>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'club'">
+          <ion-label position="floating">Dirección</ion-label>
+          <ion-input formControlName="direccion"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Email</ion-label>
-        <ion-input formControlName="email"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
-        Email inválido. Formato requerido: formato&#64;email.ejemplo
-      </ion-text>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-label position="floating">Apellido Paterno</ion-label>
+          <ion-input formControlName="apellidoPaterno"></ion-input>
+          <ion-note *ngIf="registerForm.get('apellidoPaterno')?.invalid && registerForm.get('apellidoPaterno')?.touched" color="danger">
+            Apellido Paterno inválido
+          </ion-note>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Edad</ion-label>
-        <ion-input formControlName="edad"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('edad')?.touched && registerForm.get('edad')?.invalid">
-        Edad inválida. Debes ser mayor o igual a 18 años.
-      </ion-text>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-label position="floating">Apellido Materno</ion-label>
+          <ion-input formControlName="apellidoMaterno"></ion-input>
+          <ion-note *ngIf="registerForm.get('apellidoMaterno')?.invalid && registerForm.get('apellidoMaterno')?.touched" color="danger">
+            Apellido Materno inválido
+          </ion-note>
+        </ion-item>
 
-      <ion-item>
-        <ion-label>Posición</ion-label>
-        <ion-select formControlName="posicion">
-          <ion-select-option value="Portero">Portero</ion-select-option>
-          <ion-select-option value="Defensa">Defensa</ion-select-option>
-          <ion-select-option value="Mediocampista">Mediocampista</ion-select-option>
-          <ion-select-option value="Delantero">Delantero</ion-select-option>
-        </ion-select>
-      </ion-item>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input formControlName="email"></ion-input>
+          <ion-note *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" color="danger">
+            Email inválido
+          </ion-note>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Foto</ion-label>
-        <ion-buttons>
-          <ion-button (click)="takePhoto()">Sacar Foto</ion-button>
-          <ion-button (click)="selectPhoto()">Seleccionar Foto</ion-button>
-        </ion-buttons>
-      </ion-item>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-label position="floating">Edad</ion-label>
+          <ion-input formControlName="edad" type="number"></ion-input>
+          <ion-note *ngIf="registerForm.get('edad')?.invalid && registerForm.get('edad')?.touched" color="danger">
+            Edad inválida
+          </ion-note>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Contraseña</ion-label>
-        <ion-input type="password" formControlName="password"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
-        Contraseña inválida. Mínimo 8 caracteres, máximo 15. Debe contener al menos una mayúscula, un número y un carácter especial.
-      </ion-text>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-label>Posición</ion-label>
+          <ion-select formControlName="posicion">
+            <ion-select-option *ngFor="let posicion of posiciones" [value]="posicion">{{ posicion }}</ion-select-option>
+          </ion-select>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Confirmar Contraseña</ion-label>
-        <ion-input type="password" formControlName="confirmPassword"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid">
-        Las contraseñas no coinciden.
-      </ion-text>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-label>Buscando Equipo</ion-label>
+          <ion-checkbox formControlName="buscandoEquipo"></ion-checkbox>
+        </ion-item>
 
-      <ion-item>
-        <ion-label>Buscando Equipo</ion-label>
-        <ion-toggle formControlName="buscandoEquipo"></ion-toggle>
-      </ion-item>
-    </div>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+          <ion-note *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" color="danger">
+            Contraseña inválida
+          </ion-note>
+        </ion-item>
 
-    <!-- Campos específicos para clubes -->
-    <div *ngIf="registerForm.get('tipoUsuario')?.value === 'club'">
-      <ion-item>
-        <ion-label position="floating">Nombre del Club</ion-label>
-        <ion-input formControlName="nombre"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Dirección</ion-label>
-        <ion-input formControlName="direccion"></ion-input>
-      </ion-item>
-    </div>
+        <ion-item>
+          <ion-label position="floating">Confirmar Contraseña</ion-label>
+          <ion-input type="password" formControlName="confirmPassword"></ion-input>
+          <ion-note *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" color="danger">
+            Contraseñas no coinciden
+          </ion-note>
+        </ion-item>
 
-    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">Registrar</ion-button>
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-button expand="full" (click)="takePhoto()">Tomar Foto</ion-button>
+        </ion-item>
+
+        <ion-item *ngIf="registerForm.get('tipoUsuario')?.value === 'jugador'">
+          <ion-button expand="full" (click)="selectPhoto()">Seleccionar Foto</ion-button>
+        </ion-item>
+
+        <ion-item *ngIf="foto">
+          <img [src]="foto" alt="Foto de Perfil">
+        </ion-item>
+
+        <ion-button expand="full" type="submit" [disabled]="!registerForm.valid">Registrarse</ion-button>
+      </ion-card-content>
+    </ion-card>
   </form>
 </ion-content>

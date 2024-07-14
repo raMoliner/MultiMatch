@@ -1,10 +1,10 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Administración de Club</ion-title>
+    <ion-title>Administración</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="userType === 'club'">
   <h2>Canchas</h2>
   <ion-list>
     <ion-item *ngFor="let cancha of canchas">
@@ -24,4 +24,12 @@
     <ion-input [(ngModel)]="tipoCancha"></ion-input>
   </ion-item>
   <ion-button expand="full" (click)="addCancha()">Agregar Cancha</ion-button>
+</ion-content>
+
+<ion-content *ngIf="userType === 'jugador'">
+  <ion-item>
+    <ion-label>Miembro ID</ion-label>
+    <ion-input [(ngModel)]="miembroId"></ion-input>
+  </ion-item>
+  <ion-button (click)="agregarMiembro()">Agregar Miembro</ion-button>
 </ion-content>

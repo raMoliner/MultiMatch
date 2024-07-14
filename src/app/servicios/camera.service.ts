@@ -17,4 +17,14 @@ export class CameraService {
 
     return image.dataUrl!;
   }
+
+  async selectPicture(): Promise<string> {
+    const image = await Camera.getPhoto({
+      quality: 100,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Photos
+    });
+
+    return image.dataUrl!;
+  }
 }

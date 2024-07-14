@@ -13,6 +13,7 @@ export interface Usuario {
   tipoUsuario: string;
   buscandoEquipo?: boolean;
   equipo?: string;
+  direccion?: string;
 }
 
 export interface Equipo {

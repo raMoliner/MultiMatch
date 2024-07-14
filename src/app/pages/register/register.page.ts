@@ -5,6 +5,7 @@ import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service'
 import { Usuario } from 'src/app/models/models';
 import { regionesComunas } from 'src/app/models/regiones-comunas';
 import { CameraService } from 'src/app/servicios/camera.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-register',
@@ -15,6 +16,8 @@ export class RegisterPage implements OnInit {
   registerForm: FormGroup;
   regiones: string[] = [];
   comunas: string[] = [];
+  foto: SafeResourceUrl | null = null;
+  posiciones = ['Delantero', 'Mediocampista', 'Defensa', 'Portero'];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -22,29 +25,31 @@ export class RegisterPage implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private almacenamientoService: AlmacenamientoService,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private sanitizer: DomSanitizer
   ) {
     this.registerForm = this.formBuilder.group({
       tipoUsuario: ['jugador', Validators.required],
-      rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
+      rut: ['', [Validators.required, Validators.pattern(/^\d{7,8}-[\dkK]$/)]],
       region: ['', Validators.required],
       comuna: ['', Validators.required],
-      nombre: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
-      apellidoPaterno: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
-      apellidoMaterno: ['', [Validators.minLength(3), Validators.maxLength(15), Validators.pattern(/^[a-zA-Z]+$/)]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]],
+      direccion: [''],
+      apellidoPaterno: ['', [Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]],
+      apellidoMaterno: ['', [Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]],
       email: ['', [Validators.required, Validators.email]],
-      edad: ['', [Validators.required, Validators.min(18)]],
+      edad: ['', [Validators.min(18)]],
       posicion: [''],
       foto: [''],
-      password: ['', [Validators.minLength(8), Validators.maxLength(15), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Z])(?=.*[@$!%*?&])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/)]],
       confirmPassword: ['', Validators.required],
-      buscandoEquipo: [false],
-      direccion: ['']
+      buscandoEquipo: [false]
     }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit() {
     this.regiones = this.loadRegiones();
+    this.onTipoUsuarioChange();
   }
 
   loadRegiones(): string[] {
@@ -84,7 +89,8 @@ export class RegisterPage implements OnInit {
       posicion: formValues.posicion || '',
       foto: formValues.foto || '',
       password: formValues.password || '',
-      buscandoEquipo: formValues.buscandoEquipo || false
+      buscandoEquipo: formValues.buscandoEquipo || false,
+      direccion: formValues.direccion || ''
     };
 
     try {
@@ -101,6 +107,7 @@ export class RegisterPage implements OnInit {
   async takePhoto() {
     try {
       const photo = await this.cameraService.takePicture();
+      this.foto = this.sanitizer.bypassSecurityTrustResourceUrl(photo);
       this.registerForm.patchValue({ foto: photo });
     } catch (error) {
       this.showErrorAlert('Error', (error as Error).message);
@@ -109,7 +116,8 @@ export class RegisterPage implements OnInit {
 
   async selectPhoto() {
     try {
-      const photo = await this.cameraService.takePicture(); // Se usa el mismo método para seleccionar foto de la galería
+      const photo = await this.cameraService.selectPicture();
+      this.foto = this.sanitizer.bypassSecurityTrustResourceUrl(photo);
       this.registerForm.patchValue({ foto: photo });
     } catch (error) {
       this.showErrorAlert('Error', (error as Error).message);
@@ -133,5 +141,33 @@ export class RegisterPage implements OnInit {
     } else {
       confirmPassword?.setErrors(null);
     }
+  }
+
+  onTipoUsuarioChange() {
+    const tipoUsuario = this.registerForm.get('tipoUsuario')?.value;
+    if (tipoUsuario === 'club') {
+      this.registerForm.get('nombre')?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]);
+      this.registerForm.get('apellidoPaterno')?.clearValidators();
+      this.registerForm.get('apellidoMaterno')?.clearValidators();
+      this.registerForm.get('edad')?.clearValidators();
+      this.registerForm.get('posicion')?.clearValidators();
+      this.registerForm.get('buscandoEquipo')?.clearValidators();
+      this.registerForm.get('direccion')?.setValidators([Validators.required]);
+    } else {
+      this.registerForm.get('nombre')?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]);
+      this.registerForm.get('apellidoPaterno')?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]);
+      this.registerForm.get('apellidoMaterno')?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]);
+      this.registerForm.get('edad')?.setValidators([Validators.required, Validators.min(18)]);
+      this.registerForm.get('posicion')?.setValidators([]);
+      this.registerForm.get('buscandoEquipo')?.setValidators([]);
+      this.registerForm.get('direccion')?.clearValidators();
+    }
+    this.registerForm.get('nombre')?.updateValueAndValidity();
+    this.registerForm.get('apellidoPaterno')?.updateValueAndValidity();
+    this.registerForm.get('apellidoMaterno')?.updateValueAndValidity();
+    this.registerForm.get('edad')?.updateValueAndValidity();
+    this.registerForm.get('posicion')?.updateValueAndValidity();
+    this.registerForm.get('buscandoEquipo')?.updateValueAndValidity();
+    this.registerForm.get('direccion')?.updateValueAndValidity();
   }
 }

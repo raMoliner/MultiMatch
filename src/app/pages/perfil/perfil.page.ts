@@ -19,13 +19,13 @@ export class PerfilPage implements OnInit {
     private alertController: AlertController
   ) {
     this.perfilForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellidoPaterno: ['', Validators.required],
-      apellidoMaterno: ['', Validators.required],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]],
+      apellidoPaterno: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]],
+      apellidoMaterno: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+$/)]],
       email: ['', [Validators.required, Validators.email]],
-      rut: ['', Validators.required],
-      edad: ['', Validators.required],
-      posicion: ['', Validators.required],
+      rut: ['', [Validators.required, Validators.pattern(/^\d{7,8}-[\dKk]$/)]],
+      edad: ['', [Validators.required, Validators.min(18)]],
+      posicion: [''],
       foto: ['']
     });
   }
@@ -34,18 +34,16 @@ export class PerfilPage implements OnInit {
     this.loadPerfil();
   }
 
-  loadPerfil() {
-    this.almacenamientoService.getUsuarios().subscribe(
-      (usuarios: Usuario[]) => {
-        this.perfilUsuario = usuarios[0]; 
-        if (this.perfilUsuario) {
-          this.perfilForm.patchValue(this.perfilUsuario);
-        }
-      },
-      error => {
-        this.showErrorAlert('Error cargando el profile', (error as Error).message);
+  async loadPerfil() {
+    try {
+      const currentUser = await this.almacenamientoService.get<Usuario>('currentUser');
+      this.perfilUsuario = currentUser;
+      if (this.perfilUsuario) {
+        this.perfilForm.patchValue(this.perfilUsuario);
       }
-    );
+    } catch (error) {
+      this.showErrorAlert('Error cargando el perfil', (error as Error).message);
+    }
   }
 
   async actualizarPerfil() {
@@ -53,9 +51,9 @@ export class PerfilPage implements OnInit {
       const updatedUsuario = { ...this.perfilUsuario, ...this.perfilForm.value };
       try {
         await this.almacenamientoService.updateUsuario(updatedUsuario);
-        this.showSuccessAlert('Profile actualizado con éxito');
+        this.showSuccessAlert('Perfil actualizado con éxito');
       } catch (error) {
-        this.showErrorAlert('Error actualizando el profile', (error as Error).message);
+        this.showErrorAlert('Error actualizando el perfil', (error as Error).message);
       }
     }
   }

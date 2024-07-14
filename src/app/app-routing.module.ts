@@ -13,40 +13,16 @@ const routes: Routes = [
   { path: 'reserva', loadChildren: () => import('./pages/reserva/reserva.module').then(m => m.ReservaPageModule), canActivate: [AuthGuard] },
   { path: 'partido', loadChildren: () => import('./pages/partido/partido.module').then(m => m.PartidoPageModule), canActivate: [AuthGuard] },
   { path: 'logout', component: LogoutComponent },
-  {
-    path: 'club-admin',
-    loadChildren: () => import('./pages/club-admin/club-admin.module').then( m => m.ClubAdminPageModule)
-  },
-  {
-    path: 'jugador-admin',
-    loadChildren: () => import('./pages/jugador-admin/jugador-admin.module').then( m => m.JugadorAdminPageModule)
-  },
-  {
-    path: 'solicitar-partido',
-    loadChildren: () => import('./pages/solicitar-partido/solicitar-partido.module').then( m => m.SolicitarPartidoPageModule)
-  },
-  {
-    path: 'jugadores',
-    loadChildren: () => import('./pages/jugadores/jugadores.module').then( m => m.JugadoresPageModule)
-  },
-  {
-    path: 'buzon',
-    loadChildren: () => import('./pages/buzon/buzon.module').then( m => m.BuzonPageModule)
-  },
-  {
-    path: 'invitar-jugador',
-    loadChildren: () => import('./pages/invitar-jugador/invitar-jugador.module').then( m => m.InvitarJugadorPageModule)
-  },
-  {
-    path: 'invitaciones',
-    loadChildren: () => import('./pages/invitaciones/invitaciones.module').then( m => m.InvitacionesPageModule)
-  }
+  { path: 'admin', loadChildren: () => import('./pages/admin/admin.module').then(m => m.AdminPageModule), canActivate: [AuthGuard] },
+  { path: 'solicitar-partido', loadChildren: () => import('./pages/solicitar-partido/solicitar-partido.module').then(m => m.SolicitarPartidoPageModule), canActivate: [AuthGuard] },
+  { path: 'jugadores', loadChildren: () => import('./pages/jugadores/jugadores.module').then(m => m.JugadoresPageModule), canActivate: [AuthGuard] },
+  { path: 'invitaciones', loadChildren: () => import('./pages/invitaciones/invitaciones.module').then(m => m.InvitacionesPageModule), canActivate: [AuthGuard] },
+  { path: 'equipos-buscando-contrincante', loadChildren: () => import('./pages/equipos-buscando-contrincante/equipos-buscando-contrincante.module').then(m => m.EquiposBuscandoContrincantePageModule), canActivate: [AuthGuard] },
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
-  ],
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

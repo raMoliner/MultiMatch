@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
-import { Usuario, Invitacion } from 'src/app/models/models';
-import { AlertController } from '@ionic/angular';
+import { Usuario, Invitacion, Equipo } from 'src/app/models/models';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-invitaciones',
@@ -11,32 +11,58 @@ import { AlertController } from '@ionic/angular';
 export class InvitacionesPage implements OnInit {
   currentUser: Usuario | null = null;
   invitaciones: Invitacion[] = [];
+  jugadores: Usuario[] = [];
+  mensaje: string = '';
+  isLoading = true;
 
   constructor(
     private almacenamientoService: AlmacenamientoService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController
   ) {}
 
   async ngOnInit() {
-    this.currentUser = await this.almacenamientoService.getCurrentUser();
-    if (this.currentUser) {
-      this.almacenamientoService
-        .getInvitaciones()
-        .subscribe((todasInvitaciones: Invitacion[]) => {
-          this.invitaciones = todasInvitaciones.filter(
-            (i: Invitacion) => i.jugadorId === this.currentUser?.id
-          );
-        });
-    } else {
-     
-      console.error('No se encontro al usuario.');
-      
+    const loading = await this.loadingController.create({
+      message: 'Cargando',
+    });
+    await loading.present();
+
+    try {
+      this.currentUser = await this.almacenamientoService.getCurrentUser();
+      if (this.currentUser) {
+        this.loadInvitaciones();
+        if (this.currentUser.tipoUsuario === 'club') {
+          this.loadJugadores();
+        }
+      } else {
+        console.error('No se encontro al usuario.');
+      }
+    } catch (error) {
+      this.showErrorAlert('Error cargando invitaciones', (error as Error).message);
+    } finally {
+      this.isLoading = false;
+      loading.dismiss();
     }
   }
 
-  async mostrarAlert(mensaje: string) {
+  async loadInvitaciones() {
+    this.almacenamientoService
+      .getInvitaciones()
+      .subscribe((todasInvitaciones: Invitacion[]) => {
+        this.invitaciones = todasInvitaciones.filter(
+          (i: Invitacion) => i.jugadorId === this.currentUser?.id
+        );
+      });
+  }
+
+  async loadJugadores() {
+    const jugadores = await this.almacenamientoService.getUsuarios().toPromise();
+    this.jugadores = jugadores ? jugadores.filter(j => j.tipoUsuario === 'jugador') : [];
+  }
+
+  async mostrarAlert(header: string, mensaje: string) {
     const alert = await this.alertController.create({
-      header: 'Invitación',
+      header,
       message: mensaje,
       buttons: ['OK'],
     });
@@ -61,14 +87,57 @@ export class InvitacionesPage implements OnInit {
         invitacion.equipoId
       );
       if (equipo) {
-        equipo.miembros.push(this.currentUser.id.toString()); 
+        equipo.miembros.push(this.currentUser.id.toString());
         await this.almacenamientoService.updateEquipo(equipo);
-        this.mostrarAlert('Has sido añadido al equipo');
+        this.mostrarAlert('Invitación Aceptada', 'Has sido añadido al equipo');
       }
     } else {
-      this.mostrarAlert('Has rechazado la invitación');
+      this.mostrarAlert('Invitación Rechazada', 'Has rechazado la invitación');
     }
 
-    this.ngOnInit(); 
+    this.loadInvitaciones();
+  }
+
+  private async showErrorAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  async enviarInvitacion(jugador: Usuario) {
+    const alert = await this.alertController.create({
+      header: 'Invitar Jugador',
+      inputs: [
+        {
+          name: 'mensaje',
+          type: 'text',
+          placeholder: 'Escribe un mensaje'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Enviar',
+          handler: async (data) => {
+            const currentUser = await this.almacenamientoService.getCurrentUser();
+            if (currentUser) {
+              const equipo = await this.almacenamientoService.getEquipoById(currentUser.equipo || '');
+              if (equipo) {
+                await this.almacenamientoService.enviarInvitacion(jugador, equipo, data.mensaje);
+                this.mostrarAlert('Invitación Enviada', 'La invitación ha sido enviada al jugador.');
+              }
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

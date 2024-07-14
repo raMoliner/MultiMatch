@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
   }
 
   verMasJugadores() {
-    this.navCtrl.navigateForward('/jugadores-buscando-equipo');
+    this.navCtrl.navigateForward('/jugadores');
   }
 
   verMasEquipos() {
@@ -101,6 +101,15 @@ export class HomePage implements OnInit {
   }
 
   private async showErrorAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  private async showSuccessAlert(header: string, message: string) {
     const alert = await this.alertController.create({
       header,
       message,
@@ -128,14 +137,5 @@ export class HomePage implements OnInit {
         this.showSuccessAlert('Reto Enviado', 'El reto ha sido enviado al equipo.');
       }
     }
-  }
-
-  private async showSuccessAlert(header: string, message: string) {
-    const alert = await this.alertController.create({
-      header,
-      message,
-      buttons: ['OK']
-    });
-    await alert.present();
   }
 }

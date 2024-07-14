@@ -1,11 +1,16 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Jugadores</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="showLookingForTeam = !showLookingForTeam">
+        <ion-icon slot="icon-only" name="filter"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-searchbar [(ngModel)]="searchTerm"></ion-searchbar>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filtrarJugadores()"></ion-searchbar>
   <ion-list>
     <ion-item *ngFor="let jugador of jugadoresFiltrados">
       {{ jugador.nombre }} {{ jugador.apellidoPaterno }}

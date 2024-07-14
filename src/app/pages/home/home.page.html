@@ -29,7 +29,7 @@
 
     <h2>Jugadores Buscando Equipo</h2>
     <ion-list>
-      <ion-item *ngFor="let jugador of jugadoresSinEquipo" class="list-item">
+      <ion-item *ngFor="let jugador of jugadoresSinEquipo | slice:0:maxJugadoresMostrar" class="list-item">
         <ion-label>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}
           <p>Posición: {{ jugador.posicion }}</p>
           <p>Edad: {{ jugador.edad }}</p>
@@ -39,18 +39,18 @@
       </ion-item>
     </ion-list>
     <div class="button-container">
-      <ion-button size="small" (click)="verMasJugadores()">Ver Más</ion-button>
+      <ion-button size="small" *ngIf="jugadoresSinEquipo.length > maxJugadoresMostrar" (click)="verMasJugadores()">Ver Más</ion-button>
     </div>
 
     <h2>Equipos Buscando Contrincante</h2>
     <ion-list>
-      <ion-item *ngFor="let equipo of equiposBuscandoContrincante" class="list-item">
+      <ion-item *ngFor="let equipo of equiposBuscandoContrincante | slice:0:maxJugadoresMostrar" class="list-item">
         <ion-label>{{ equipo.nombre }}</ion-label>
         <ion-button size="small" (click)="retarEquipo(equipo)">Retar</ion-button>
       </ion-item>
     </ion-list>
     <div class="button-container">
-      <ion-button size="small" (click)="verMasEquipos()">Ver Más</ion-button>
+      <ion-button size="small" *ngIf="equiposBuscandoContrincante.length > maxJugadoresMostrar" (click)="verMasEquipos()">Ver Más</ion-button>
     </div>
 
     <h2>Jugadores Destacados</h2>

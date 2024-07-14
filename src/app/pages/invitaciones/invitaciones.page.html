@@ -10,9 +10,22 @@
       <ion-label>
         <h2>Equipo: {{ invitacion.equipoNombre }}</h2>
         <p>{{ invitacion.mensaje }}</p>
-        <ion-button *ngIf="invitacion.estado === 'pendiente'" (click)="responderInvitacion(invitacion, 'aceptada')">Aceptar</ion-button>
-        <ion-button *ngIf="invitacion.estado === 'pendiente'" (click)="responderInvitacion(invitacion, 'rechazada')">Rechazar</ion-button>
+        <p>Estado: {{ invitacion.estado }}</p>
       </ion-label>
+      <ion-button *ngIf="invitacion.estado === 'pendiente'" (click)="responderInvitacion(invitacion, 'aceptada')">Aceptar</ion-button>
+      <ion-button *ngIf="invitacion.estado === 'pendiente'" (click)="responderInvitacion(invitacion, 'rechazada')">Rechazar</ion-button>
     </ion-item>
   </ion-list>
+
+  <ion-card *ngIf="currentUser?.tipoUsuario === 'club'">
+    <ion-card-header>
+      <ion-card-title>Invitar Jugador</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let jugador of jugadores">
+        <ion-label>{{ jugador.nombre }} {{ jugador.apellidoPaterno }}</ion-label>
+        <ion-button (click)="enviarInvitacion(jugador)">Invitar</ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

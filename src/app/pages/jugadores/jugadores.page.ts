@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlmacenamientoService } from 'src/app/servicios/almacenamiento.service';
-import { Usuario, Equipo } from 'src/app/models/models';
+import { Usuario } from 'src/app/models/models';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -11,8 +11,8 @@ import { AlertController } from '@ionic/angular';
 export class JugadoresPage implements OnInit {
   jugadores: Usuario[] = [];
   jugadoresFiltrados: Usuario[] = [];
-  equipoId: string = '';
   searchTerm: string = '';
+  showLookingForTeam: boolean = false;
 
   constructor(private almacenamientoService: AlmacenamientoService, private alertController: AlertController) {}
 
@@ -27,7 +27,7 @@ export class JugadoresPage implements OnInit {
     this.jugadoresFiltrados = this.jugadores.filter(jugador =>
       jugador.nombre?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       jugador.apellidoPaterno?.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    ).filter(jugador => !this.showLookingForTeam || jugador.buscandoEquipo);
   }
 
   async invitarJugador(jugador: Usuario) {

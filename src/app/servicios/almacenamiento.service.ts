@@ -21,9 +21,9 @@ export class AlmacenamientoService {
   async set(key: string, value: any): Promise<any> {
     return this._storage?.set(key, value) ?? Promise.resolve();
   }
-
+  
   async get<T>(key: string): Promise<T | null> {
-    return this._storage?.get(key) ?? Promise.resolve(null);
+    return this._storage?.get(key) ?? null;
   }
 
   async clear(): Promise<void> {
@@ -242,7 +242,7 @@ export class AlmacenamientoService {
       id: this.generateId(),
       equipoId: equipo.id,
       jugadorId: jugador.id,
-      equipoNombre: equipo.nombre, // Añadir esta propiedad
+      equipoNombre: equipo.nombre, 
       mensaje,
       estado: 'pendiente'
     };
